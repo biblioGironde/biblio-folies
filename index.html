@@ -68,6 +68,8 @@ header.tete { display: flex; flex-wrap: wrap; gap: 10px 24px; align-items: basel
 .entete-prog h1 { font: italic 500 clamp(2.2rem, 5vw, 3.6rem)/1.04 var(--serif); margin: 0; text-wrap: balance; }
 .entete-prog .sous { font: 600 1.25rem var(--serif); color: var(--doux); margin: 0; }
 .entete-prog p { margin: 0; }
+.entete-prog .musique { font-size: .92rem; color: var(--doux); }
+.entete-prog .musique i { font-family: var(--serif); font-size: 1.1rem; color: var(--encre); }
 .planches { display: grid; gap: 40px; padding-bottom: 20px; }
 .planche { display: grid; gap: 22px 36px; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); align-items: start; padding-top: 34px; border-top: 1px solid var(--filet); }
 @media (max-width: 760px) { .planche { grid-template-columns: minmax(0, 1fr); } }
@@ -166,6 +168,7 @@ function vueProgramme(p) {
       <h1>${esc(p.titre)}</h1>
       <p class="sous">${esc(p.sousTitre || "")}</p>
       <p>${esc(p.intro || "")}</p>
+      ${p.audio && p.audio.src ? `<p class="musique">Musique : <i>${esc(p.audio.titre || "")}</i>${p.audio.credit ? " — " + esc(p.audio.credit) : ""}${p.audio.ark ? ` <a href="https://gallica.bnf.fr/ark:/12148/${esc(p.audio.ark)}" target="_blank" rel="noopener">écouter sur Gallica</a>` : ""}</p>` : ""}
       <div class="actions"><a class="btn plein" href="diaporama.html#p=${encodeURIComponent(p.id)}">${ICON_PLAY}Lancer la projection</a></div>
     </section>
     <div class="planches">

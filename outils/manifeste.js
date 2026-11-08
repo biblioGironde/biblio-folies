@@ -10,7 +10,7 @@ const path = require("path");
 const crypto = require("crypto");
 
 const RACINE = path.resolve(__dirname, "..");
-const INCLURE = [/^[^/]+\.html$/, /^programmes\.json$/, /^lib\/.+\.js$/, /^images\/.+\.(jpe?g|png|webp)$/i, /^audio\/.+\.(mp3|ogg|m4a|opus)$/i];
+const INCLURE = [/^[^/]+\.html$/, /^programmes\.json$/, /^lib\/.+\.js$/, /^images\/.+\.(jpe?g|png|webp)$/i, /^musique\/.+\.(mp3|ogg|m4a|opus)$/i];
 
 function parcourir(dossier, base = "") {
   return fs.readdirSync(dossier, { withFileTypes: true }).flatMap(e => {

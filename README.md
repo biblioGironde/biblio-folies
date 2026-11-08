@@ -13,6 +13,11 @@ Musée numérique des bibliothèques de Gironde, inspiré des Micro-Folies : des
 | `diaporama.html` | Projection plein écran : fondu enchaîné lent, légende, QR code |
 | `compagnon.html` | Page ouverte par le QR code sur le téléphone : texte de médiation et musique, synchronisés avec l'écran |
 
+Au lancement d'une thématique accompagnée de musique, la personne qui lance la projection choisit où la musique joue :
+
+- **Dans la salle** : la musique sort de l'ordinateur de projection. Un bouton de réglages apparaît en haut à gauche quand on bouge la souris. Il ouvre le lecteur (lecture, position, volume).
+- **Sur les téléphones** : chacun écoute avec ses écouteurs. Le lecteur s'affiche en bas de la page ouverte par le QR code.
+
 Touches de la projection : `F` plein écran, `Espace` pause, `←` `→` planche précédente ou suivante, `C` cadrage (plein écran ou planche entière), `M` menu.
 
 La synchronisation se fait sans serveur. Le QR code transmet la thématique et l'heure de départ, et chaque téléphone calcule lui-même la planche affichée.
@@ -27,7 +32,7 @@ Tout le contenu est décrit dans `programmes.json`. Chaque thématique (programm
   "titre": "Les formes artistiques de la nature",
   "sousTitre": "Ernst Haeckel, Kunstformen der Natur, 1899-1904",
   "intro": "…", "duree": 45,
-  "audio": { "src": "audio/haeckel.mp3", "titre": "…", "credit": "…" },
+  "audio": { "src": "musique/lehmann-1907-du-bist-der-lenz.mp3", "titre": "…", "credit": "…", "ark": "bpt6k1287336" },
   "slides": [{
     "ark": "btv1b525055842", "f": 67, "image": "images/btv1b525055842-f67.jpg",
     "titre": "Kunstformen der Natur", "planche": "Planche 8", "legende": "Discomedusae, méduses",
@@ -41,7 +46,7 @@ Tout le contenu est décrit dans `programmes.json`. Chaque thématique (programm
 - `image` pointe vers le fichier du dépôt. Sans fichier local, l'image est chargée depuis Gallica.
 - `theme` regroupe les thématiques sur la page d'accueil.
 - `cadrage` peut valoir `"plein"` (par défaut : l'image remplit l'écran et défile) ou `"entier"` (planche entière sur fond flou). Il se règle par thématique ou par planche.
-- `audio` est facultatif. Placez les fichiers dans `audio/`, et vérifiez les droits de l'œuvre comme de l'enregistrement.
+- `audio` est facultatif. Les fichiers vont dans `musique/`. `ark` renvoie vers l'enregistrement sur Gallica. Vérifiez les droits de l'œuvre comme ceux de l'enregistrement : les disques de Gallica marqués « domaine public » conviennent.
 
 Les images vont dans `images/`, nommées `<ark>-f<numéro de vue>.jpg`, recadrées sur la planche et d'environ 1600 px de haut. Gallica bloque les téléchargements automatiques : pour récupérer les liens à ouvrir dans le navigateur, utilisez `python3 outils/telecharger_images.py --liste`.
 
@@ -61,6 +66,12 @@ npm start          # lance l'application de bureau
 npm run dist       # construit l'installateur pour le système courant
 python3 -m http.server 8000   # ou tester le site dans un navigateur
 ```
+
+## Musique
+
+| Thématique | Enregistrement | Source |
+|---|---|---|
+| Haeckel, *Kunstformen der Natur* | Richard Wagner, *Die Walküre* : « Du bist der Lenz ». Lilli Lehmann (soprano), orchestre dirigé par Friedrich Kark. Disque Odeon, Berlin, 1907 | [Gallica bpt6k1287336](https://gallica.bnf.fr/ark:/12148/bpt6k1287336), domaine public |
 
 ## Droits
 

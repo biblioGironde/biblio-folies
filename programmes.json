@@ -10,7 +10,12 @@
       "sousTitre": "Ernst Haeckel, Kunstformen der Natur, 1899-1904",
       "intro": "Entre 1899 et 1904, le biologiste allemand Ernst Haeckel publie en livraisons cent planches consacrées aux organismes qu'il juge les plus beaux : radiolaires, méduses, coraux, diatomées, éponges. Le livre veut montrer que la nature produit spontanément des formes d'une régularité et d'une richesse que l'art n'a qu'à observer.",
       "duree": 45,
-      "audio": null,
+      "audio": {
+        "src": "musique/lehmann-1907-du-bist-der-lenz.mp3",
+        "titre": "Du bist der Lenz — Die Walküre, Richard Wagner",
+        "credit": "Lilli Lehmann, soprano ; orchestre dirigé par Friedrich Kark. Disque Odeon, Berlin, 1907.",
+        "ark": "bpt6k1287336"
+      },
       "slides": [
         {
           "ark": "btv1b525055842",

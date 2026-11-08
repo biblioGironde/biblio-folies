@@ -97,6 +97,42 @@ kbd { font: 700 .8rem var(--sans); border: 1px solid rgba(243,239,230,.3); paddi
 .erreur { color: var(--or); }
 .retour-accueil { font: .9rem var(--sans); color: var(--papier-2); text-decoration: none; }
 .retour-accueil:hover, .retour-accueil:focus-visible { color: var(--or); }
+
+/* --- Choix du lieu de diffusion de la musique --- */
+.choix-musique .piste { font: italic 500 1.25rem/1.3 var(--serif); color: var(--papier); margin: 0; }
+.choix-musique .piste span { display: block; font: .85rem/1.4 var(--sans); font-style: normal; color: var(--papier-2); margin-top: 4px; }
+.choix-musique .choix button { grid-template-columns: auto minmax(0, 1fr); column-gap: 16px; align-items: center; }
+.choix-musique .choix svg { width: 30px; height: 30px; fill: var(--or); grid-row: span 2; }
+
+/* --- Réglages : bouton qui apparaît au mouvement de la souris, lecteur de la projection --- */
+.reglages-btn {
+  position: fixed; top: 4vh; left: 4.5vw; z-index: 5; width: 52px; height: 52px; border-radius: 50%;
+  border: 1px solid rgba(243,239,230,.35); background: rgba(10,11,11,.6); color: var(--papier);
+  display: grid; place-items: center; cursor: pointer; backdrop-filter: blur(6px);
+  opacity: 1; transition: opacity .6s ease;
+}
+.reglages-btn svg { width: 24px; height: 24px; fill: currentColor; }
+.reglages-btn:hover, .reglages-btn:focus-visible { border-color: var(--or); color: var(--or); outline: none; }
+body.idle .reglages-btn { opacity: 0; pointer-events: none; }
+.son-bloque .reglages-btn { opacity: 1 !important; pointer-events: auto !important; border-color: var(--or); }
+.reglages-btn .bulle { position: absolute; left: 62px; white-space: nowrap; font: 700 .85rem var(--sans); background: var(--or); color: var(--nuit); padding: 6px 10px; border-radius: 3px; display: none; }
+.son-bloque .reglages-btn .bulle { display: block; }
+.panneau {
+  position: fixed; top: calc(4vh + 64px); left: 4.5vw; z-index: 5; width: min(380px, 90vw);
+  background: rgba(14,16,15,.92); border: 1px solid rgba(243,239,230,.18); border-radius: 6px;
+  padding: 18px 20px; display: grid; gap: 14px; backdrop-filter: blur(10px);
+}
+.panneau h2 { margin: 0; font: 700 .72rem var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--or); }
+.panneau .titre-piste { font: italic 500 1.2rem/1.25 var(--serif); margin: 0; }
+.panneau .credit { font: .82rem/1.4 var(--sans); color: var(--papier-2); margin: 0; }
+.panneau .ligne { display: flex; align-items: center; gap: 12px; }
+.panneau button.lire { width: 46px; height: 46px; border-radius: 50%; border: 0; background: var(--papier); color: var(--nuit); display: grid; place-items: center; cursor: pointer; flex: none; }
+.panneau button.lire svg { width: 20px; height: 20px; fill: currentColor; }
+.panneau button.lire:focus-visible { outline: 3px solid var(--or); outline-offset: 2px; }
+.panneau input[type=range] { flex: 1; accent-color: var(--or); }
+.panneau .temps { font: .8rem var(--sans); color: var(--papier-2); font-variant-numeric: tabular-nums; min-width: 82px; text-align: right; }
+.panneau label { font: .82rem var(--sans); color: var(--papier-2); display: flex; align-items: center; gap: 10px; }
+
 </style>
 </head>
 <body>
@@ -107,13 +143,43 @@ kbd { font: 700 .8rem var(--sans); border: 1px solid rgba(243,239,230,.3); paddi
   <div class="legende-bloc" id="legende"></div>
   <div class="qr">
     <div class="code" id="qr" role="img" aria-label="QR code vers le compagnon mobile"></div>
-    <p>Scannez pour lire l'histoire de la planche et écouter la musique</p>
+    <p id="qrTexte">Scannez pour lire l'histoire de la planche</p>
   </div>
   <div class="compteur" id="compteur"></div>
 </div>
+<button class="reglages-btn" id="reglagesBtn" type="button" aria-label="Réglages de la musique" aria-expanded="false" aria-controls="panneau" hidden>
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.4 13a7.6 7.6 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.4 7.4 0 0 0-1.7-1L15 3.3h-4l-.4 2.6a7.4 7.4 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.6 7.6 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.4 7.4 0 0 0 1.7 1l.4 2.6h4l.4-2.6a7.4 7.4 0 0 0 1.7-1l2.5 1 2-3.5zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z" transform="translate(-1 0)"/></svg>
+  <span class="bulle">Cliquez pour lancer la musique</span>
+</button>
+<div class="panneau" id="panneau" hidden>
+  <h2>Musique de la projection</h2>
+  <div>
+    <p class="titre-piste" id="sonTitre"></p>
+    <p class="credit" id="sonCredit"></p>
+  </div>
+  <div class="ligne">
+    <button class="lire" id="sonLire" type="button" aria-label="Lancer la musique"><svg viewBox="0 0 24 24" id="sonIcone"><path d="M8 5v14l11-7z"/></svg></button>
+    <input type="range" id="sonPosition" min="0" max="1000" value="0" aria-label="Position dans le morceau">
+    <span class="temps" id="sonTemps">0:00 / 0:00</span>
+  </div>
+  <label for="sonVolume">Volume <input type="range" id="sonVolume" min="0" max="100" value="80"></label>
+</div>
+<audio id="son" loop preload="auto"></audio>
 <div class="fil" id="fil"></div>
 <div class="pause" id="pause" hidden>En pause — les téléphones devront rescanner le QR code</div>
 <div class="astuce" id="astuce" hidden>Touche <kbd>F</kbd> pour le plein écran</div>
+
+<div class="accueil choix-musique" id="choixMusique" hidden>
+  <div class="boite">
+    <a class="retour-accueil" href="#" id="retourProgrammes">← Changer de programme</a>
+    <h1 id="choixTitre">Où joue la musique ?</h1>
+    <p class="piste" id="choixPiste"></p>
+    <div class="choix">
+      <button type="button" data-m="salle"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 8v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z"/></svg><b>Dans la salle, avec la projection</b><span>La musique sort des haut-parleurs de l'ordinateur. Un bouton de réglages, visible quand on bouge la souris, donne accès au lecteur.</span></button>
+      <button type="button" data-m="mobile"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 0 0-9 9v7a2 2 0 0 0 2 2h3v-8H5v-1a7 7 0 0 1 14 0v1h-3v8h3a2 2 0 0 0 2-2v-7a9 9 0 0 0-9-9z"/></svg><b>Sur les téléphones du public</b><span>Chacun écoute avec ses écouteurs, depuis la page ouverte par le QR code. La salle reste silencieuse.</span></button>
+    </div>
+  </div>
+</div>
 
 <div class="accueil" id="accueil" hidden>
   <div class="boite">
@@ -146,33 +212,58 @@ kbd { font: 700 .8rem var(--sans); border: 1px solid rgba(243,239,230,.3); paddi
 <script src="lib/musee.js"></script>
 <script>
 "use strict";
-let data, list = [], t0 = null, p = null, courant = -1, actif = "A", pauseA = null, timer = null, wake = null, cadrageForce = "";
+let data, list = [], t0 = null, p = null, m = "mobile", courant = -1, actif = "A", pauseA = null, timer = null, wake = null, cadrageForce = "";
+const son = document.getElementById("son");
 const $ = id => document.getElementById(id);
 
 function afficherAccueil() {
   clearInterval(timer); timer = null;
-  $("scene").hidden = true; $("accueil").hidden = false;
+  arreterSon();
+  $("scene").hidden = true; $("choixMusique").hidden = true; $("accueil").hidden = false;
   $("fil").style.width = 0; $("pause").hidden = true; $("astuce").hidden = true;
   const c = $("choix"); c.innerHTML = "";
   const ajouter = (id, titre, sous) => {
     const b = document.createElement("button"); b.type = "button";
     b.innerHTML = `<b>${Musee.esc(titre)}</b><span>${Musee.esc(sous)}</span>`;
-    b.onclick = () => { demarrer(id, Math.floor(Date.now() / 1000)); pleinEcran(); };
+    b.onclick = () => lancer(id);
     c.append(b);
   };
   data.programmes.forEach(pr => ajouter(pr.id, pr.titre, `${pr.sousTitre} · ${pr.slides.length} planches`));
   if (data.programmes.length > 1) ajouter("tout", "Tous les programmes en boucle", `${data.programmes.reduce((a, x) => a + x.slides.length, 0)} planches`);
 }
 
-function demarrer(prog, depart) {
+/* Après le choix d'un programme : si une musique l'accompagne, on demande où la diffuser. */
+function lancer(prog) {
+  const morceaux = Musee.playlist(data, prog).map(Musee.musique).filter(Boolean);
+  if (!morceaux.length) { demarrer(prog, Math.floor(Date.now() / 1000), "mobile"); pleinEcran(); return; }
+  $("accueil").hidden = true; $("scene").hidden = true; $("choixMusique").hidden = false;
+  const titres = [...new Set(morceaux.map(a => a.titre).filter(Boolean))];
+  $("choixPiste").innerHTML = titres.length ? `${Musee.esc(titres.join(" · "))}<span>${Musee.esc(morceaux[0].credit || "")}</span>` : "";
+  $("choixMusique").querySelectorAll("button[data-m]").forEach(b => {
+    b.onclick = () => {
+      demarrer(prog, Math.floor(Date.now() / 1000), b.dataset.m);
+      if (m === "salle") { sonVoulu = true; majSon(Musee.position(list, t0).slide); } // le clic autorise la lecture
+      pleinEcran();
+    };
+  });
+  $("choixMusique").querySelector("button[data-m]").focus();
+}
+
+function majHash() { history.replaceState(null, "", `#p=${encodeURIComponent(p)}&t=${t0}&m=${m}`); }
+
+function demarrer(prog, depart, mode) {
   const d = parseInt($("duree").value, 10);
   if (d) data.programmes.forEach(x => x.duree = d);
   cadrageForce = $("cadrage").value;
-  p = prog; t0 = depart;
+  p = prog; t0 = depart; m = mode === "salle" ? "salle" : "mobile";
   list = Musee.playlist(data, p);
   if (!list.length) { afficherAccueil(); return; }
-  history.replaceState(null, "", `#p=${encodeURIComponent(p)}&t=${t0}`);
-  $("accueil").hidden = true; $("scene").hidden = false;
+  majHash();
+  const avecMusique = list.some(Musee.musique);
+  $("qrTexte").textContent = avecMusique && m === "mobile" ? "Scannez pour lire l'histoire de la planche et écouter la musique" : "Scannez pour lire l'histoire de la planche";
+  $("reglagesBtn").hidden = !(avecMusique && m === "salle");
+  $("accueil").hidden = true; $("choixMusique").hidden = true; $("scene").hidden = false;
+  document.body.classList.add("idle");
   courant = -1; majQR(); tick();
   clearInterval(timer); timer = setInterval(tick, 250);
   if (!document.fullscreenElement) $("astuce").hidden = false;
@@ -184,7 +275,7 @@ function majQR() {
   // le QR code pointe vers la page GitHub Pages du projet.
   const local = !/^https?:$/.test(location.protocol) || /^(localhost|127\.|0\.0\.0\.0|\[::1\])/.test(location.hostname);
   const base = local && data.urlPublique ? data.urlPublique : location.href;
-  const url = new URL(`compagnon.html#p=${encodeURIComponent(p)}&t=${t0}`, base).href;
+  const url = new URL(`compagnon.html#p=${encodeURIComponent(p)}&t=${t0}&m=${m}`, base).href;
   const q = qrcode(0, "M"); q.addData(url); q.make();
   $("qr").innerHTML = q.createSvgTag({ cellSize: 4, margin: 0, scalable: true });
   $("qr").title = url;
@@ -236,19 +327,58 @@ function montrer(pos) {
     l.classList.remove("fondu");
   }, 900);
   $("compteur").textContent = `${String(s.rang).padStart(2, "0")} / ${String(s.total).padStart(2, "0")}`;
+  if (m === "salle") majSon(s);
 
   const n = list[(pos.index + 1) % list.length];
   const pre = new Image(); pre.src = Musee.image(n, ",1600");
 }
 
-function decaler(sec) { if (pauseA) return; t0 = Math.floor(t0 - sec); history.replaceState(null, "", `#p=${encodeURIComponent(p)}&t=${t0}`); majQR(); tick(); }
+/* ---------- Musique dans la salle ---------- */
+const ICONES = { lire: '<path d="M8 5v14l11-7z"/>', pause: '<path d="M7 5h4v14H7zM13 5h4v14h-4z"/>' };
+let sonVoulu = false;
+function majSon(s) {
+  const a = Musee.musique(s);
+  if (!a) { son.pause(); $("sonTitre").textContent = "Pas de musique pour cette planche"; $("sonCredit").textContent = ""; return; }
+  $("sonTitre").textContent = a.titre || "Musique du programme";
+  $("sonCredit").textContent = [a.credit, "Source : gallica.bnf.fr / BnF"].filter(Boolean).join(" ");
+  const src = new URL(a.src, location.href).href;
+  if (son.src !== src) { son.src = src; }
+  if (sonVoulu && son.paused && !pauseA) jouer();
+}
+function jouer() {
+  sonVoulu = true;
+  son.play().then(() => document.body.classList.remove("son-bloque"))
+    .catch(() => document.body.classList.add("son-bloque")); // lecture refusée sans clic préalable
+}
+function arreterSon() { sonVoulu = false; son.pause(); document.body.classList.remove("son-bloque"); $("panneau").hidden = true; $("reglagesBtn").hidden = true; }
+const fmt = x => Number.isFinite(x) ? `${Math.floor(x / 60)}:${String(Math.floor(x % 60)).padStart(2, "0")}` : "0:00";
+son.volume = 0.8;
+son.addEventListener("play", () => { $("sonIcone").innerHTML = ICONES.pause; $("sonLire").setAttribute("aria-label", "Mettre la musique en pause"); });
+son.addEventListener("pause", () => { $("sonIcone").innerHTML = ICONES.lire; $("sonLire").setAttribute("aria-label", "Lancer la musique"); });
+son.addEventListener("timeupdate", () => {
+  $("sonTemps").textContent = `${fmt(son.currentTime)} / ${fmt(son.duration)}`;
+  if (son.duration) $("sonPosition").value = Math.round(son.currentTime / son.duration * 1000);
+});
+$("sonPosition").addEventListener("input", e => { if (son.duration) son.currentTime = e.target.value / 1000 * son.duration; });
+$("sonVolume").addEventListener("input", e => { son.volume = e.target.value / 100; });
+$("sonLire").addEventListener("click", () => { if (son.paused) jouer(); else { sonVoulu = false; son.pause(); } });
+$("reglagesBtn").addEventListener("click", () => {
+  if (document.body.classList.contains("son-bloque")) { jouer(); }
+  const ouvert = $("panneau").hidden;
+  $("panneau").hidden = !ouvert;
+  $("reglagesBtn").setAttribute("aria-expanded", String(ouvert));
+});
+$("retourProgrammes").addEventListener("click", e => { e.preventDefault(); afficherAccueil(); });
+
+function decaler(sec) { if (pauseA) return; t0 = Math.floor(t0 - sec); majHash(); majQR(); tick(); }
 function basculerPause() {
   const imgs = () => document.querySelectorAll(".diapo .img");
-  if (!pauseA) { pauseA = Date.now(); $("pause").hidden = false; imgs().forEach(i => i.style.animationPlayState = "paused"); }
+  if (!pauseA) { pauseA = Date.now(); $("pause").hidden = false; imgs().forEach(i => i.style.animationPlayState = "paused"); son.pause(); }
   else {
     t0 += Math.round((Date.now() - pauseA) / 1000); pauseA = null; $("pause").hidden = true;
     imgs().forEach(i => i.style.animationPlayState = "");
-    history.replaceState(null, "", `#p=${encodeURIComponent(p)}&t=${t0}`); majQR(); tick();
+    majHash(); majQR(); tick();
+    if (m === "salle" && sonVoulu) jouer();
   }
 }
 function pleinEcran() {
@@ -261,6 +391,8 @@ document.addEventListener("fullscreenchange", () => { if (document.fullscreenEle
 
 document.addEventListener("keydown", e => {
   if ($("scene").hidden) return;
+  if (e.target.closest && e.target.closest("#panneau") && e.key !== "Escape") return;
+  if (e.key === "Escape" && !$("panneau").hidden) { $("panneau").hidden = true; $("reglagesBtn").setAttribute("aria-expanded", "false"); return; }
   const pos = Musee.position(list, t0);
   if (e.key === "f" || e.key === "F") { document.fullscreenElement ? document.exitFullscreen() : pleinEcran(); }
   else if (e.key === " ") { e.preventDefault(); basculerPause(); }
@@ -277,13 +409,21 @@ document.addEventListener("keydown", e => {
 document.addEventListener("dblclick", () => { if (!$("scene").hidden) pleinEcran(); });
 
 let idle;
-document.addEventListener("mousemove", () => { document.body.classList.remove("idle"); clearTimeout(idle); idle = setTimeout(() => document.body.classList.add("idle"), 2500); });
+document.addEventListener("mousemove", () => {
+  document.body.classList.remove("idle"); clearTimeout(idle);
+  // Le bouton de réglages reste visible tant que le lecteur est ouvert.
+  idle = setTimeout(() => { if ($("panneau").hidden) document.body.classList.add("idle"); }, 2500);
+});
 
 Musee.charger().then(d => {
   data = d;
   const h = Musee.lireHash();
-  // #p=<id> seul (lien depuis l'accueil) : la projection démarre maintenant.
-  if (h.p && (h.p === "tout" || data.programmes.some(x => x.id === h.p))) demarrer(h.p, h.t || Math.floor(Date.now() / 1000));
+  const valide = h.p && (h.p === "tout" || data.programmes.some(x => x.id === h.p));
+  if (valide && h.t) {
+    // Reprise d'une projection en cours (rechargement) : la musique de salle attend un clic.
+    demarrer(h.p, h.t, h.m || "mobile");
+    if (m === "salle" && list.some(Musee.musique)) { sonVoulu = true; majSon(Musee.position(list, t0).slide); }
+  } else if (valide) lancer(h.p); // lien depuis l'accueil : choix de la diffusion de la musique
   else afficherAccueil();
 }).catch(() => {
   $("accueil").hidden = false; $("erreur").hidden = false;

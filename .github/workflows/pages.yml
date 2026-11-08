@@ -33,7 +33,7 @@ jobs:
       - name: Préparer le site
         run: |
           mkdir _site
-          cp -r *.html programmes.json contenu.json lib images audio _site/
+          cp -r *.html programmes.json contenu.json lib images musique _site/
           touch _site/.nojekyll
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3

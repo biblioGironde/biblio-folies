@@ -43,7 +43,8 @@ header .col { display: flex; gap: 10px; align-items: center; padding-block: 10px
 .temps { height: 2px; background: var(--filet); }
 .temps div { height: 100%; width: 0; background: var(--or); transition: width .25s linear; }
 
-main { padding-block: 18px 140px; }
+main { padding-block: 18px 48px; }
+body.avec-lecteur main { padding-bottom: 140px; }
 .fiche { display: grid; gap: 14px; transition: opacity .6s ease; }
 .fiche.fondu { opacity: 0; }
 .fiche figure { margin: 0; background: var(--carte); padding: 10px; border: 1px solid var(--filet); }
@@ -124,6 +125,7 @@ h1 { font: italic 500 2.1rem/1.05 var(--serif); margin: 0; text-wrap: balance; }
 <script>
 "use strict";
 const $ = id => document.getElementById(id);
+let modeMusique = "mobile";
 let data, list = [], t0, courant = -1, suivi = true, enAttente = null, vues = [], ecoute = false;
 const audio = $("audio");
 const ICON_PLAY = '<path d="M8 5v14l11-7z"/>', ICON_PAUSE = '<path d="M7 5h4v14H7zM13 5h4v14h-4z"/>';
@@ -191,11 +193,12 @@ function majVues() {
 function revenir() { suivi = true; courant = Musee.position(list, t0).index; afficher(courant); }
 
 function majAudio(s) {
-  const a = s.audio || s.prog.audio;
-  if (!a || !a.src) { $("lecteur").hidden = true; if (!audio.paused) audio.pause(); return; }
-  $("lecteur").hidden = false;
+  const a = Musee.musique(s);
+  // Le lecteur ne s'affiche que si la musique est diffusée sur les téléphones (et non dans la salle).
+  if (!a || modeMusique === "salle") { $("lecteur").hidden = true; document.body.classList.remove("avec-lecteur"); if (!audio.paused) audio.pause(); return; }
+  $("lecteur").hidden = false; document.body.classList.add("avec-lecteur");
   $("pisteTitre").textContent = a.titre || "Musique du programme";
-  $("pisteCredit").textContent = a.credit || "";
+  $("pisteCredit").textContent = [a.credit, "Source : gallica.bnf.fr / BnF"].filter(Boolean).join(" ");
   const src = new URL(a.src, location.href).href;
   if (audio.src !== src) { audio.src = src; if (ecoute) audio.play().catch(() => {}); }
 }
@@ -212,6 +215,7 @@ Musee.charger().then(d => {
   data = d;
   const h = Musee.lireHash();
   if (!h.p || !h.t) return;
+  modeMusique = h.m || "mobile";
   list = Musee.playlist(data, h.p);
   if (!list.length) return;
   t0 = h.t;
