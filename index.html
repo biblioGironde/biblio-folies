@@ -174,7 +174,7 @@ function vueProgramme(p) {
     <div class="planches">
       ${p.slides.map((s, i) => `
         <article class="planche">
-          <figure><img loading="lazy" alt="${esc(s.titre + ", " + (s.planche || ""))}" src="${Musee.image(s, ",1600")}" data-secours="${Musee.image({ ...s, image: null }, ",1600")}"></figure>
+          <figure><img loading="lazy" alt="${esc(s.titre + ", " + (s.planche || ""))}" src="${Musee.image(s, ",1200")}" data-secours="${Musee.image({ ...s, image: null }, ",1200")}"></figure>
           <div class="texte">
             <div class="num">${String(i + 1).padStart(2, "0")} / ${String(p.slides.length).padStart(2, "0")}</div>
             <h2>${esc(s.planche || s.titre)}</h2>

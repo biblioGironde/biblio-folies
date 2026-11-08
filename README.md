@@ -50,7 +50,10 @@ Tout le contenu est décrit dans `programmes.json`. Chaque thématique (programm
 - `cadrage` peut valoir `"plein"` (par défaut : l'image remplit l'écran et défile) ou `"entier"` (planche entière sur fond flou). Il se règle par thématique ou par planche.
 - `audio` est facultatif. Les fichiers vont dans `musique/`. `ark` renvoie vers l'enregistrement sur Gallica. Vérifiez les droits de l'œuvre comme ceux de l'enregistrement : les disques de Gallica marqués « domaine public » conviennent.
 
-Les images vont dans `images/`, nommées `<ark>-f<numéro de vue>.jpg`, recadrées sur la planche et d'environ 1600 px de haut. Gallica bloque les téléchargements automatiques : pour récupérer les liens à ouvrir dans le navigateur, utilisez `python3 outils/telecharger_images.py --liste`.
+Les images vont dans `images/`, nommées `<ark>-f<numéro de vue>.jpg` :
+
+- **haute définition** (`images/`), pour la projection : la zone recadrée est demandée à Gallica en PNG, sans perte, sur 3200 px de haut (`…/<x>,<y>,<l>,<h>/,3200/0/native.png`), puis encodée une seule fois en JPEG qualité 94, sans sous-échantillonnage des couleurs (environ 3 Mo). L'effet Ken Burns agrandit l'image : une compression plus forte y devient visible ;
+- **version légère** (`images/web/`, 1400 px, environ 400 Ko), pour l'accueil et les téléphones. Gallica bloque les téléchargements automatiques : pour récupérer les liens à ouvrir dans le navigateur, utilisez `python3 outils/telecharger_images.py --liste`.
 
 ## Ce qui se passe à chaque envoi sur `main`
 
