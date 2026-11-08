@@ -60,7 +60,14 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm install
+      - name: Installer les dépendances (3 essais en cas de coupure réseau)
+        shell: bash
+        run: |
+          for essai in 1 2 3; do
+            npm install && test -d node_modules/electron/dist && exit 0
+            echo "Essai $essai échoué, nouvel essai dans 30 s"; rm -rf node_modules/electron; sleep 30
+          done
+          exit 1
       - run: npm pkg set version=${{ env.VERSION }}
       - run: node outils/manifeste.js
       - name: Construire et déposer dans le brouillon
