@@ -36,11 +36,13 @@ body.idle { cursor: none; }
 }
 /* Mode « plein » : l'image remplit l'écran et glisse lentement de haut en bas
    pour que toute la planche soit parcourue pendant sa durée d'affichage. */
-@media (prefers-reduced-motion: no-preference) {
-  .diapo.on.plein .img { animation: kenburns var(--duree, 45s) ease-in-out forwards; }
-  .diapo.on.entier .img { animation: kenburns-entier var(--duree, 45s) ease-in-out forwards; }
-}
-@media (prefers-reduced-motion: reduce) { .diapo.plein .img { background-position: 50% 35%; } }
+/* L'effet ne dépend pas du réglage « Réduire les animations » du poste : ce réglage concerne
+   la personne devant l'ordinateur, pas le public de la projection. On le coupe depuis le menu
+   (« Mouvement des images ») ou avec la touche K. */
+.diapo.on.plein .img { animation: kenburns var(--duree, 45s) ease-in-out forwards; }
+.diapo.on.entier .img { animation: kenburns-entier var(--duree, 45s) ease-in-out forwards; }
+body.fixe .diapo .img { animation: none !important; }
+body.fixe .diapo.plein .img { background-position: 50% 35%; }
 /* Effet Ken Burns : zoom lent combiné à un glissement. Chaque planche reçoit l'un des mouvements
    définis dans KEN_BURNS (script), appliqué par des variables CSS. En plein écran, le glissement
    vertical parcourt aussi toute la hauteur de la planche. */
@@ -225,6 +227,12 @@ body.idle .reglages-btn { opacity: 0; pointer-events: none; }
           <option value="60">1 min</option><option value="90">1 min 30</option>
         </select>
       </label>
+      <label for="mouvement">Mouvement des images
+        <select id="mouvement">
+          <option value="kenburns">effet Ken Burns (zoom lent)</option>
+          <option value="fixe">images fixes</option>
+        </select>
+      </label>
       <label for="cadrage">Cadrage
         <select id="cadrage">
           <option value="">selon le programme</option>
@@ -233,7 +241,7 @@ body.idle .reglages-btn { opacity: 0; pointer-events: none; }
         </select>
       </label>
     </div>
-    <p class="touches"><kbd>F</kbd> plein écran · <kbd>Espace</kbd> pause · <kbd>←</kbd> <kbd>→</kbd> planche précédente ou suivante · <kbd>C</kbd> changer de cadrage · <kbd>M</kbd> retour à ce menu</p>
+    <p class="touches"><kbd>F</kbd> plein écran · <kbd>Espace</kbd> pause · <kbd>←</kbd> <kbd>→</kbd> planche précédente ou suivante · <kbd>C</kbd> changer de cadrage · <kbd>K</kbd> effet Ken Burns ou images fixes · <kbd>M</kbd> retour à ce menu</p>
     <p class="erreur" id="erreur" hidden></p>
   </div>
 </div>
@@ -428,6 +436,15 @@ function basculerPause() {
     if (m === "salle" && sonVoulu) jouer();
   }
 }
+/* ---------- Mouvement des images (préférence gardée sur ce poste) ---------- */
+function definirMouvement(v) {
+  document.body.classList.toggle("fixe", v === "fixe");
+  $("mouvement").value = v;
+  try { localStorage.setItem("biblio-folies-mouvement", v); } catch (e) {}
+}
+$("mouvement").addEventListener("change", e => definirMouvement(e.target.value));
+(() => { let v = "kenburns"; try { v = localStorage.getItem("biblio-folies-mouvement") || v; } catch (e) {} definirMouvement(v); })();
+
 /* ---------- Plein écran (API Fullscreen, avec le préfixe de Safari) ---------- */
 let inviteIgnoree = false;
 const estPleinEcran = () => !!(document.fullscreenElement || document.webkitFullscreenElement);
@@ -461,6 +478,7 @@ document.addEventListener("keydown", e => {
   else if (e.key === " ") { e.preventDefault(); basculerPause(); }
   else if (e.key === "ArrowRight") decaler(pos.restant);
   else if (e.key === "ArrowLeft") { const prev = list[(pos.index - 1 + list.length) % list.length]; decaler(-(pos.slide.duree - pos.restant) - prev.duree); }
+  else if (e.key === "k" || e.key === "K") { definirMouvement(document.body.classList.contains("fixe") ? "kenburns" : "fixe"); }
   else if (e.key === "c" || e.key === "C") {
     cadrageForce = cadrageDe(pos.slide) === "plein" ? "entier" : "plein";
     const d = $(actif === "A" ? "diapoA" : "diapoB");
