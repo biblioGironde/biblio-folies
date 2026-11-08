@@ -27,15 +27,16 @@ env:
   VERSION: 1.0.${{ github.run_number }}
 
 jobs:
+  # 1. La release est créée en brouillon : invisible tant que tout n'est pas construit.
   preparer:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Créer la release v${{ env.VERSION }}
+      - name: Créer le brouillon v${{ env.VERSION }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create "v$VERSION" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+          gh release create "v$VERSION" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --draft \
             --title "Biblio-Folies $VERSION" \
             --notes "Mise à jour du $(date +%d/%m/%Y) — $(git log -1 --pretty=%s).
 
@@ -46,10 +47,11 @@ jobs:
 
           Une fois installée, l'application récupère seule les nouvelles images et les nouveaux textes."
 
+  # 2. Construction pour les trois systèmes, fichiers déposés dans le brouillon.
   construire:
     needs: preparer
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest]
     runs-on: ${{ matrix.os }}
@@ -61,8 +63,37 @@ jobs:
       - run: npm install
       - run: npm pkg set version=${{ env.VERSION }}
       - run: node outils/manifeste.js
-      - name: Construire et publier
+      - name: Construire et déposer dans le brouillon
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CSC_IDENTITY_AUTO_DISCOVERY: "false"
         run: npx electron-builder --publish always
+
+  # 3. Tout est construit : la release est publiée et devient la dernière version.
+  #    Les anciennes releases incomplètes passent en préversion (rien n'est supprimé).
+  publier:
+    needs: construire
+    runs-on: ubuntu-latest
+    steps:
+      - name: Publier v${{ env.VERSION }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release edit "v$VERSION" --repo "$GITHUB_REPOSITORY" --draft=false --latest
+          gh api "repos/$GITHUB_REPOSITORY/releases?per_page=100" \
+            --jq '.[] | select(.draft == false and .prerelease == false and (.assets | length) < 10) | .tag_name' |
+          while read -r tag; do
+            echo "Release incomplète passée en préversion : $tag"
+            gh release edit "$tag" --repo "$GITHUB_REPOSITORY" --prerelease
+          done
+
+  # Construction échouée ou annulée : le brouillon est supprimé (il n'a jamais été visible).
+  nettoyer:
+    needs: construire
+    if: ${{ failure() || cancelled() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Supprimer le brouillon v${{ env.VERSION }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release delete "v$VERSION" --repo "$GITHUB_REPOSITORY" --yes || true
