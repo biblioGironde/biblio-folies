@@ -87,8 +87,18 @@ body.entier .legende-bloc { max-width: 36vw; }
 .fil { position: fixed; left: 0; bottom: 0; height: 3px; background: var(--or); width: 0; opacity: .8; }
 .compteur { position: fixed; top: 4vh; right: 4.5vw; font: 400 clamp(.85rem, .9vw, 1.1rem) var(--sans); color: var(--papier-2); letter-spacing: .1em; font-variant-numeric: tabular-nums; text-shadow: 0 1px 8px rgba(0,0,0,.7); }
 .pause { position: fixed; top: 4vh; left: 4.5vw; background: var(--or); color: var(--nuit); font: 700 .9rem var(--sans); padding: 8px 14px; border-radius: 2px; }
-.astuce { position: fixed; top: 4vh; left: 50%; transform: translateX(-50%); font: .9rem var(--sans); color: var(--papier); background: rgba(0,0,0,.55); padding: 8px 14px; border-radius: 3px; transition: opacity 1s; }
-body.idle .astuce { opacity: 0; }
+/* Invitation au plein écran : les navigateurs exigent un clic pour quitter leur interface. */
+.invite-ecran { position: fixed; inset: 0; z-index: 6; display: grid; place-items: center; background: rgba(8,9,9,.45); }
+.invite-ecran button {
+  all: unset; cursor: pointer; display: grid; justify-items: center; gap: 10px; text-align: center;
+  padding: 26px 34px; border-radius: 8px; background: rgba(14,16,15,.88); border: 1px solid var(--or); color: var(--papier);
+  backdrop-filter: blur(8px);
+}
+.invite-ecran button:focus-visible { outline: 3px solid var(--or); outline-offset: 4px; }
+.invite-ecran svg { width: 46px; height: 46px; fill: var(--or); }
+.invite-ecran b { font: italic 500 2rem/1.1 var(--serif); }
+.invite-ecran span { font: .9rem var(--sans); color: var(--papier-2); }
+.invite-ecran .ignorer { all: unset; cursor: pointer; margin-top: 14px; font: .85rem var(--sans); color: var(--papier-2); text-decoration: underline; }
 
 /* --- Accueil --- */
 .accueil { position: fixed; inset: 0; background: var(--nuit); display: grid; place-items: center; padding: 24px; overflow: auto; }
@@ -115,8 +125,10 @@ kbd { font: 700 .8rem var(--sans); border: 1px solid rgba(243,239,230,.3); paddi
 .choix-musique .choix svg { width: 30px; height: 30px; fill: var(--or); grid-row: span 2; }
 
 /* --- Réglages : bouton qui apparaît au mouvement de la souris, lecteur de la projection --- */
+.outils { position: fixed; top: 4vh; left: 4.5vw; z-index: 5; display: flex; gap: 10px; }
+.outils[hidden] { display: none !important; }
 .reglages-btn {
-  position: fixed; top: 4vh; left: 4.5vw; z-index: 5; width: 52px; height: 52px; border-radius: 50%;
+  position: relative; width: 52px; height: 52px; border-radius: 50%;
   border: 1px solid rgba(243,239,230,.35); background: rgba(10,11,11,.6); color: var(--papier);
   display: grid; place-items: center; cursor: pointer; backdrop-filter: blur(6px);
   opacity: 1; transition: opacity .6s ease;
@@ -157,10 +169,13 @@ body.idle .reglages-btn { opacity: 0; pointer-events: none; }
   </div>
   <div class="compteur" id="compteur"></div>
 </div>
+<div class="outils" id="outils" hidden>
+<button class="reglages-btn" id="ecranBtn" type="button" aria-label="Plein écran (touche F)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5v2H6v3H4zm10-5h6v5h-2V6h-4V4zM6 15v3h3v2H4v-5h2zm12 0h2v5h-5v-2h3v-3z"/></svg></button>
 <button class="reglages-btn" id="reglagesBtn" type="button" aria-label="Réglages de la musique" aria-expanded="false" aria-controls="panneau" hidden>
   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.4 13a7.6 7.6 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.4 7.4 0 0 0-1.7-1L15 3.3h-4l-.4 2.6a7.4 7.4 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.6 7.6 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.4 7.4 0 0 0 1.7 1l.4 2.6h4l.4-2.6a7.4 7.4 0 0 0 1.7-1l2.5 1 2-3.5zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z" transform="translate(-1 0)"/></svg>
   <span class="bulle">Cliquez pour lancer la musique</span>
 </button>
+</div>
 <div class="panneau" id="panneau" hidden>
   <h2>Musique de la projection</h2>
   <div>
@@ -177,7 +192,12 @@ body.idle .reglages-btn { opacity: 0; pointer-events: none; }
 <audio id="son" loop preload="auto"></audio>
 <div class="fil" id="fil"></div>
 <div class="pause" id="pause" hidden>En pause — les téléphones devront rescanner le QR code</div>
-<div class="astuce" id="astuce" hidden>Touche <kbd>F</kbd> pour le plein écran</div>
+<div class="invite-ecran" id="inviteEcran" hidden>
+  <div style="display:grid;justify-items:center">
+    <button type="button" id="inviteBtn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5v2H6v3H4zm10-5h6v5h-2V6h-4V4zM6 15v3h3v2H4v-5h2zm12 0h2v5h-5v-2h3v-3z"/></svg><b>Afficher en plein écran</b><span>Cliquez ou appuyez sur F · Échap pour en sortir</span></button>
+    <button type="button" class="ignorer" id="inviteIgnorer">Continuer dans la fenêtre</button>
+  </div>
+</div>
 
 <div class="accueil choix-musique" id="choixMusique" hidden>
   <div class="boite">
@@ -230,7 +250,7 @@ function afficherAccueil() {
   clearInterval(timer); timer = null; dureeImposee = null;
   arreterSon();
   $("scene").hidden = true; $("choixMusique").hidden = true; $("accueil").hidden = false;
-  $("fil").style.width = 0; $("pause").hidden = true; $("astuce").hidden = true;
+  $("fil").style.width = 0; $("pause").hidden = true; $("inviteEcran").hidden = true; $("outils").hidden = true;
   const c = $("choix"); c.innerHTML = "";
   const ajouter = (id, titre, sous) => {
     const b = document.createElement("button"); b.type = "button";
@@ -279,7 +299,9 @@ function demarrer(prog, depart, mode) {
   document.body.classList.add("idle");
   courant = -1; majQR(); tick();
   clearInterval(timer); timer = setInterval(tick, 250);
-  if (!document.fullscreenElement) $("astuce").hidden = false;
+  $("outils").hidden = false;
+  // L'application de bureau passe d'elle-même en plein écran : pas d'invitation.
+  if (!estPleinEcran() && !inviteIgnoree && !navigator.userAgent.includes("Electron")) $("inviteEcran").hidden = false;
   veille();
 }
 
@@ -406,20 +428,36 @@ function basculerPause() {
     if (m === "salle" && sonVoulu) jouer();
   }
 }
+/* ---------- Plein écran (API Fullscreen, avec le préfixe de Safari) ---------- */
+let inviteIgnoree = false;
+const estPleinEcran = () => !!(document.fullscreenElement || document.webkitFullscreenElement);
 function pleinEcran() {
   const el = document.documentElement;
-  if (!document.fullscreenElement && el.requestFullscreen) el.requestFullscreen().then(() => $("astuce").hidden = true).catch(() => {});
+  if (estPleinEcran()) return;
+  const req = el.requestFullscreen ? el.requestFullscreen({ navigationUI: "hide" }) : (el.webkitRequestFullscreen ? el.webkitRequestFullscreen() : null);
+  if (req && req.catch) req.catch(() => { if (!$("scene").hidden) $("inviteEcran").hidden = false; });
 }
+function quitterPleinEcran() { (document.exitFullscreen || document.webkitExitFullscreen || (() => {})).call(document); }
+function majEcran() {
+  const plein = estPleinEcran();
+  if (plein) $("inviteEcran").hidden = true;
+  $("ecranBtn").setAttribute("aria-label", plein ? "Quitter le plein écran (touche F)" : "Plein écran (touche F)");
+}
+document.addEventListener("fullscreenchange", majEcran);
+document.addEventListener("webkitfullscreenchange", majEcran);
+// Ce clic autorise aussi le navigateur à jouer la musique de salle.
+$("inviteBtn").addEventListener("click", () => { pleinEcran(); if (m === "salle" && sonVoulu) jouer(); });
+$("inviteIgnorer").addEventListener("click", () => { inviteIgnoree = true; $("inviteEcran").hidden = true; });
+$("ecranBtn").addEventListener("click", () => estPleinEcran() ? quitterPleinEcran() : pleinEcran());
 async function veille() { try { if ("wakeLock" in navigator && !wake) { wake = await navigator.wakeLock.request("screen"); wake.addEventListener("release", () => wake = null); } } catch (e) {} }
 document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && timer) veille(); });
-document.addEventListener("fullscreenchange", () => { if (document.fullscreenElement) $("astuce").hidden = true; });
 
 document.addEventListener("keydown", e => {
   if ($("scene").hidden) return;
   if (e.target.closest && e.target.closest("#panneau") && e.key !== "Escape") return;
   if (e.key === "Escape" && !$("panneau").hidden) { $("panneau").hidden = true; $("reglagesBtn").setAttribute("aria-expanded", "false"); return; }
   const pos = Musee.position(list, t0);
-  if (e.key === "f" || e.key === "F") { document.fullscreenElement ? document.exitFullscreen() : pleinEcran(); }
+  if (e.key === "f" || e.key === "F") { estPleinEcran() ? quitterPleinEcran() : pleinEcran(); }
   else if (e.key === " ") { e.preventDefault(); basculerPause(); }
   else if (e.key === "ArrowRight") decaler(pos.restant);
   else if (e.key === "ArrowLeft") { const prev = list[(pos.index - 1 + list.length) % list.length]; decaler(-(pos.slide.duree - pos.restant) - prev.duree); }

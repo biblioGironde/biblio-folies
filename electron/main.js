@@ -26,6 +26,15 @@ function creerFenetre() {
   fenetre.once("ready-to-show", () => { fenetre.maximize(); fenetre.show(); });
   fenetre.loadURL("app://contenu/index.html");
 
+  // Une projection s'affiche en vrai plein écran, sans aucune barre, dès son démarrage ;
+  // retour en fenêtre sur l'accueil. (Le plein écran de l'API web exige un clic ; ici, non.)
+  const ajusterEcran = url => {
+    if (url.includes("diaporama.html#p=")) fenetre.setFullScreen(true);
+    else if (url.includes("index.html")) fenetre.setFullScreen(false);
+  };
+  fenetre.webContents.on("did-navigate", (e, url) => ajusterEcran(url));
+  fenetre.webContents.on("did-navigate-in-page", (e, url) => ajusterEcran(url));
+
   // Les liens externes (Gallica, GitHub) s'ouvrent dans le navigateur du poste.
   fenetre.webContents.setWindowOpenHandler(({ url }) => { shell.openExternal(url); return { action: "deny" }; });
   fenetre.webContents.on("will-navigate", (e, url) => {

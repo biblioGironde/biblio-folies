@@ -18,6 +18,8 @@ Au lancement d'une thématique accompagnée de musique, la personne qui lance la
 - **Dans la salle** : la musique sort de l'ordinateur de projection. Un bouton de réglages apparaît en haut à gauche quand on bouge la souris. Il ouvre le lecteur (lecture, position, volume).
 - **Sur les téléphones** : chacun écoute avec ses écouteurs. Le lecteur s'affiche en bas de la page ouverte par le QR code.
 
+La projection utilise l’API Fullscreen du navigateur, ce qui masque toute son interface. Le navigateur exige un clic pour cela : si la page n’est pas déjà en plein écran, un grand bouton « Afficher en plein écran » s’affiche. Dans l’application de bureau, la projection passe d’elle-même en plein écran.
+
 Touches de la projection : `F` plein écran, `Espace` pause, `←` `→` planche précédente ou suivante, `C` cadrage (plein écran ou planche entière), `M` menu.
 
 La synchronisation se fait sans serveur. Le QR code transmet la thématique et l'heure de départ, et chaque téléphone calcule lui-même la planche affichée.
