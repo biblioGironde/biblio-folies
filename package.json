@@ -31,7 +31,7 @@
       "contenu.json",
       "lib/**",
       "images/**",
-      "musique/**",
+      "musique/*.{mp3,ogg,m4a,opus}",
       "package.json"
     ],
     "publish": [
