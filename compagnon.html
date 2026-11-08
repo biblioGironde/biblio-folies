@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f4f1ea" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#141716" media="(prefers-color-scheme: dark)">
+<title>Biblio-Folies — compagnon</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
+<style>
+/* Compagnon : un cartel de poche. Colonne de lecture unique, image en tête, lecteur audio fixé en bas. */
+:root {
+  --fond: #f4f2ee; --carte: #ffffff; --encre: #1c1f1d; --doux: #5d625e; --filet: #d9d6cf;
+  --or: #8a6a2a; --or-fond: #efe6d2; --direct: #b23a2a;
+  --serif: "Cormorant Garamond", "Iowan Old Style", Garamond, Georgia, serif;
+  --sans: "Atkinson Hyperlegible", system-ui, -apple-system, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --fond: #141716; --carte: #1c201e; --encre: #ebe7de; --doux: #a7a69f; --filet: #333835; --or: #d1b273; --or-fond: #2e2a20; --direct: #ef7a64; color-scheme: dark; }
+}
+:root[data-theme="dark"] { --fond: #141716; --carte: #1c201e; --encre: #ebe7de; --doux: #a7a69f; --filet: #333835; --or: #d1b273; --or-fond: #2e2a20; --direct: #ef7a64; color-scheme: dark; }
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--fond); color: var(--encre); font: 17px/1.6 var(--sans); }
+.col { max-width: 640px; margin: 0 auto; padding-left: max(18px, env(safe-area-inset-left, 0px)); padding-right: max(18px, env(safe-area-inset-right, 0px)); }
+
+header.barre {
+  position: sticky; top: 0; z-index: 5; background: var(--fond);
+  padding-top: env(safe-area-inset-top, 0px); border-bottom: 1px solid var(--filet);
+}
+header .col { display: flex; gap: 10px; align-items: center; padding-block: 10px; min-width: 0; }
+.direct { display: inline-flex; align-items: center; gap: 7px; font: 700 .72rem var(--sans); letter-spacing: .12em; text-transform: uppercase; color: var(--direct); white-space: nowrap; }
+.direct i { width: 8px; height: 8px; border-radius: 50%; background: var(--direct); }
+@media (prefers-reduced-motion: no-preference) { .direct i { animation: pouls 2s ease-in-out infinite; } }
+@keyframes pouls { 50% { opacity: .25; } }
+.direct.off { color: var(--doux); } .direct.off i { background: var(--doux); animation: none; }
+.prog { font: .85rem var(--sans); color: var(--doux); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 1; }
+.rang { font: 700 .8rem var(--sans); color: var(--doux); font-variant-numeric: tabular-nums; }
+.temps { height: 2px; background: var(--filet); }
+.temps div { height: 100%; width: 0; background: var(--or); transition: width .25s linear; }
+
+main { padding-block: 18px 140px; }
+.fiche { display: grid; gap: 14px; transition: opacity .6s ease; }
+.fiche.fondu { opacity: 0; }
+.fiche figure { margin: 0; background: var(--carte); padding: 10px; border: 1px solid var(--filet); }
+.fiche figure img { display: block; width: 100%; height: auto; max-height: 62vh; object-fit: contain; background: var(--fond); }
+.eyebrow { font: 700 .72rem var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--or); }
+h1 { font: italic 500 2.1rem/1.05 var(--serif); margin: 0; text-wrap: balance; }
+.planche { font: 600 1.35rem/1.2 var(--serif); margin: 0; }
+.meta { color: var(--doux); margin: 0; font-size: .95rem; }
+.recit { display: grid; gap: .9em; max-width: 62ch; }
+.recit p { margin: 0; }
+.source { font-size: .82rem; color: var(--doux); border-top: 1px solid var(--filet); padding-top: 10px; margin: 6px 0 0; }
+.source a { color: var(--or); }
+
+.nouvelle {
+  position: fixed; left: 50%; transform: translateX(-50%); top: calc(env(safe-area-inset-top, 0px) + 58px); z-index: 6;
+  font: 700 .9rem var(--sans); background: var(--encre); color: var(--fond); border: 0; border-radius: 999px; padding: 10px 18px;
+  box-shadow: 0 6px 20px rgba(0,0,0,.25); cursor: pointer; white-space: nowrap;
+}
+.retour { font: 700 .9rem var(--sans); background: var(--or-fond); color: var(--encre); border: 1px solid var(--or); border-radius: 3px; padding: 10px 14px; cursor: pointer; justify-self: start; }
+
+.vues { margin-top: 34px; display: grid; gap: 10px; }
+.vues h2 { font: 700 .75rem var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--doux); margin: 0; }
+.vues ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.vues button { all: unset; cursor: pointer; display: grid; grid-template-columns: 54px minmax(0, 1fr); gap: 12px; align-items: center; width: 100%; padding: 6px; border-radius: 3px; }
+.vues button:focus-visible { outline: 2px solid var(--or); }
+.vues img { width: 54px; height: 68px; object-fit: cover; background: var(--carte); border: 1px solid var(--filet); }
+.vues b { font: italic 500 1.1rem/1.2 var(--serif); display: block; }
+.vues span { font-size: .82rem; color: var(--doux); }
+
+.lecteur {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; background: var(--carte); border-top: 1px solid var(--filet);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.lecteur .col { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 14px; align-items: center; padding-block: 12px; }
+.play { width: 52px; height: 52px; border-radius: 50%; border: 0; background: var(--encre); color: var(--fond); cursor: pointer; display: grid; place-items: center; }
+.play svg { width: 22px; height: 22px; fill: currentColor; }
+.play:focus-visible { outline: 3px solid var(--or); outline-offset: 2px; }
+.piste { min-width: 0; }
+.piste b { display: block; font: 600 1.1rem/1.2 var(--serif); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.piste span { display: block; font-size: .8rem; color: var(--doux); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.vide { padding-block: 18vh; display: grid; gap: 12px; text-align: left; }
+.vide h1 { font-size: 2.4rem; }
+.vide p { color: var(--doux); margin: 0; max-width: 40ch; }
+</style>
+</head>
+<body>
+<header class="barre" id="barre" hidden>
+  <div class="col">
+    <span class="direct" id="direct"><i></i>En direct</span>
+    <span class="prog" id="prog"></span>
+    <span class="rang" id="rang"></span>
+  </div>
+  <div class="temps"><div id="temps"></div></div>
+</header>
+
+<main class="col" id="main">
+  <div class="vide" id="vide">
+    <div class="eyebrow">Biblio-Folies</div>
+    <h1>Scannez le QR code affiché à l'écran</h1>
+    <p>Cette page suit le diaporama projeté : vous y lirez l'histoire de chaque planche et pourrez écouter la musique du programme avec des écouteurs.</p>
+  </div>
+</main>
+
+<button class="nouvelle" id="nouvelle" hidden>Nouvelle planche à l'écran ↑</button>
+
+<div class="lecteur" id="lecteur" hidden>
+  <div class="col">
+    <button class="play" id="play" aria-label="Écouter la musique">
+      <svg viewBox="0 0 24 24" id="icone"><path d="M8 5v14l11-7z"/></svg>
+    </button>
+    <div class="piste"><b id="pisteTitre"></b><span id="pisteCredit"></span></div>
+  </div>
+  <audio id="audio" loop preload="none"></audio>
+</div>
+
+<script src="lib/musee.js"></script>
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+let data, list = [], t0, courant = -1, suivi = true, enAttente = null, vues = [], ecoute = false;
+const audio = $("audio");
+const ICON_PLAY = '<path d="M8 5v14l11-7z"/>', ICON_PAUSE = '<path d="M7 5h4v14H7zM13 5h4v14h-4z"/>';
+
+function tick() {
+  const pos = Musee.position(list, t0);
+  $("temps").style.width = (pos.progress * 100).toFixed(1) + "%";
+  if (pos.index === courant) return;
+  courant = pos.index;
+  if (!vues.includes(pos.index)) vues.push(pos.index);
+  if (vues.length > 30) vues.shift();
+  if (!suivi) { majDirect(); majVues(); return; }
+  if (window.scrollY > 160) { enAttente = pos.index; $("nouvelle").hidden = false; majEntete(pos.slide); majAudio(pos.slide); majVues(); return; }
+  afficher(pos.index);
+}
+
+function majEntete(s) {
+  $("prog").textContent = s.prog.titre;
+  $("rang").textContent = `${s.rang}/${s.total}`;
+}
+
+function majDirect() {
+  $("direct").classList.toggle("off", !suivi);
+  $("direct").lastChild.textContent = suivi ? "En direct" : "Hors direct";
+}
+
+function afficher(i, scroll = true) {
+  const s = list[i];
+  enAttente = null; $("nouvelle").hidden = true;
+  let f = document.querySelector(".fiche");
+  if (!f) { $("main").innerHTML = '<article class="fiche"></article><section class="vues" id="vues" hidden><h2>Planches déjà passées</h2><ol></ol></section>'; f = document.querySelector(".fiche"); }
+  f.classList.add("fondu");
+  setTimeout(() => {
+    f.innerHTML = `
+      ${!suivi ? '<button class="retour" id="retour">Revenir au direct</button>' : ""}
+      <figure><img data-secours="${Musee.image({ ...s, image: null }, "900,")}" onerror="if (this.dataset.secours && this.src !== this.dataset.secours) { this.src = this.dataset.secours; } else { this.closest('figure').hidden = true; }" alt="${Musee.esc(s.titre + ", " + (s.planche || ""))}" src="${Musee.image(s, "900,")}"></figure>
+      <div class="eyebrow">${Musee.esc(s.prog.titre)}</div>
+      <h1>${Musee.esc(s.titre)}</h1>
+      ${s.planche ? `<p class="planche">${Musee.esc(s.planche)}${s.legende ? " — " + Musee.esc(s.legende) : ""}</p>` : ""}
+      <p class="meta">${Musee.esc([s.auteur, s.date].filter(Boolean).join(", "))}</p>
+      <div class="recit">${Musee.paragraphes(s.texte || s.prog.intro)}</div>
+      <p class="source">Source : gallica.bnf.fr / Bibliothèque nationale de France${s.cote ? " — " + Musee.esc(s.cote) : ""}.<br>
+        <a href="${Musee.lienGallica(s)}" target="_blank" rel="noopener">Voir cette page en très haute définition sur Gallica</a></p>`;
+    const r = $("retour"); if (r) r.onclick = revenir;
+    f.classList.remove("fondu");
+  }, 350);
+  if (scroll) window.scrollTo({ top: 0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+  majEntete(s); majAudio(s); majVues(); majDirect();
+}
+
+function majVues() {
+  const box = $("vues"); if (!box) return;
+  const passees = vues.filter(i => i !== courant).slice().reverse();
+  box.hidden = !passees.length;
+  const ol = box.querySelector("ol"); ol.innerHTML = "";
+  passees.forEach(i => {
+    const s = list[i];
+    const li = document.createElement("li");
+    li.innerHTML = `<button type="button"><img alt="" loading="lazy" src="${Musee.image(s, ",200")}"><span><b>${Musee.esc(s.planche || s.titre)}</b><span>${Musee.esc(s.titre)}</span></span></button>`;
+    li.querySelector("button").onclick = () => { suivi = false; afficher(i); };
+    ol.append(li);
+  });
+}
+
+function revenir() { suivi = true; courant = Musee.position(list, t0).index; afficher(courant); }
+
+function majAudio(s) {
+  const a = s.audio || s.prog.audio;
+  if (!a || !a.src) { $("lecteur").hidden = true; if (!audio.paused) audio.pause(); return; }
+  $("lecteur").hidden = false;
+  $("pisteTitre").textContent = a.titre || "Musique du programme";
+  $("pisteCredit").textContent = a.credit || "";
+  const src = new URL(a.src, location.href).href;
+  if (audio.src !== src) { audio.src = src; if (ecoute) audio.play().catch(() => {}); }
+}
+$("play").onclick = () => {
+  if (audio.paused) { ecoute = true; audio.play().catch(() => { ecoute = false; }); }
+  else { ecoute = false; audio.pause(); }
+};
+audio.addEventListener("play", () => { $("icone").innerHTML = ICON_PAUSE; $("play").setAttribute("aria-label", "Mettre la musique en pause"); });
+audio.addEventListener("pause", () => { $("icone").innerHTML = ICON_PLAY; $("play").setAttribute("aria-label", "Écouter la musique"); });
+
+$("nouvelle").onclick = () => { if (enAttente !== null) afficher(enAttente); };
+
+Musee.charger().then(d => {
+  data = d;
+  const h = Musee.lireHash();
+  if (!h.p || !h.t) return;
+  list = Musee.playlist(data, h.p);
+  if (!list.length) return;
+  t0 = h.t;
+  $("barre").hidden = false;
+  tick();
+  setInterval(tick, 500);
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") tick(); });
+}).catch(() => {
+  $("vide").querySelector("p").textContent = "Le programme n'a pas pu être chargé. Vérifiez la connexion Internet puis rechargez la page.";
+});
+window.addEventListener("hashchange", () => location.reload());
+</script>
+</body>
+</html>

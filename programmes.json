@@ -1,0 +1,173 @@
+{
+  "titre": "Biblio-Folies",
+  "urlPublique": "https://bibliogironde.github.io/biblio-folies/",
+  "dureeParDefaut": 45,
+  "programmes": [
+    {
+      "id": "haeckel",
+      "theme": "Biologie",
+      "titre": "Les formes artistiques de la nature",
+      "sousTitre": "Ernst Haeckel, Kunstformen der Natur, 1899-1904",
+      "intro": "Entre 1899 et 1904, le biologiste allemand Ernst Haeckel publie en livraisons cent planches consacrées aux organismes qu'il juge les plus beaux : radiolaires, méduses, coraux, diatomées, éponges. Le livre veut montrer que la nature produit spontanément des formes d'une régularité et d'une richesse que l'art n'a qu'à observer.",
+      "duree": 45,
+      "audio": null,
+      "slides": [
+        {
+          "ark": "btv1b525055842",
+          "f": 35,
+          "titre": "Kunstformen der Natur",
+          "planche": "Planche 1",
+          "auteur": "Ernst Haeckel",
+          "date": "1899-1904",
+          "cote": "BnF, Estampes et photographie, PET FOL-HD-77 (F)",
+          "legende": "Phaeodaria, radiolaires",
+          "texte": "Ernst Haeckel (1834-1919) est zoologiste à l'université d'Iéna. Grand voyageur, il passe des mois au bord de la mer à observer au microscope des organismes minuscules, qu'il dessine lui-même.\n\nIl a décrit des milliers d'espèces nouvelles, notamment de radiolaires, des êtres unicellulaires marins dotés d'un squelette de silice. Kunstformen der Natur, « les formes artistiques de la nature », rassemble cent planches tirées de cette œuvre de naturaliste et pensées pour un large public.\n\nRegardez la composition : chaque organisme est disposé comme un motif décoratif, symétrique, centré, presque héraldique.",
+          "image": "images/btv1b525055842-f35.jpg"
+        },
+        {
+          "ark": "btv1b525055842",
+          "f": 49,
+          "titre": "Kunstformen der Natur",
+          "planche": "Planche 4",
+          "auteur": "Ernst Haeckel",
+          "date": "1899-1904",
+          "cote": "BnF, Estampes et photographie, PET FOL-HD-77 (F)",
+          "legende": "Diatomea, diatomées",
+          "texte": "Les planches sont imprimées en lithographie, une technique de reproduction sur pierre qui permet des dégradés très fins et des aplats de couleur.\n\nHaeckel fournit ses dessins et esquisses ; le lithographe Adolf Giltsch les met au net et les reporte sur la pierre. La finesse des traits, parfois plus fins qu'un cheveu, tient à ce travail à quatre mains.\n\nCertaines planches sont en noir et blanc, d'autres en couleurs : chaque couleur demande une pierre et un passage sous la presse.",
+          "image": "images/btv1b525055842-f49.jpg"
+        },
+        {
+          "ark": "btv1b525055842",
+          "f": 67,
+          "titre": "Kunstformen der Natur",
+          "planche": "Planche 8",
+          "auteur": "Ernst Haeckel",
+          "date": "1899-1904",
+          "cote": "BnF, Estampes et photographie, PET FOL-HD-77 (F)",
+          "legende": "Discomedusae, méduses",
+          "texte": "Pour Haeckel, la symétrie est une loi profonde du vivant. Il classe les organismes selon leurs axes : symétrie rayonnante des méduses et des étoiles de mer, symétrie bilatérale des animaux qui se déplacent dans une direction.\n\nSur la page, il pousse cette idée jusqu'au bout. Il retourne les spécimens, les aligne, les fait tourner autour d'un centre. Le résultat ressemble autant à un vitrail ou à une rosace qu'à une illustration scientifique.\n\nCherchez l'axe de chaque figure : combien de fois le même motif se répète-t-il autour du centre ?",
+          "image": "images/btv1b525055842-f67.jpg"
+        },
+        {
+          "ark": "btv1b525055842",
+          "f": 77,
+          "titre": "Kunstformen der Natur",
+          "planche": "Planche 10",
+          "auteur": "Ernst Haeckel",
+          "date": "1899-1904",
+          "cote": "BnF, Estampes et photographie, PET FOL-HD-77 (F)",
+          "legende": "Ophiodea, ophiures",
+          "texte": "Le livre paraît au moment où l'Art nouveau cherche dans la nature de nouvelles formes : tiges, vagues, coquillages, ailes d'insectes.\n\nÀ Paris, l'architecte René Binet s'inspire des radiolaires dessinés par Haeckel pour la Porte monumentale de l'Exposition universelle de 1900. Il lui écrit d'ailleurs pour le lui dire, et publie ensuite un recueil d'« esquisses décoratives » nourries de ces formes.\n\nVerriers, ferronniers, créateurs de bijoux et de papiers peints puiseront à leur tour dans ces planches.",
+          "image": "images/btv1b525055842-f77.jpg"
+        },
+        {
+          "ark": "btv1b525055842",
+          "f": 93,
+          "titre": "Kunstformen der Natur",
+          "planche": "Planche 14",
+          "auteur": "Ernst Haeckel",
+          "date": "1899-1904",
+          "cote": "BnF, Estampes et photographie, PET FOL-HD-77 (F)",
+          "legende": "Peridinea, péridiniens",
+          "texte": "Ces images sont-elles exactes ? Pas tout à fait. Haeckel embellit, régularise, idéalise. Il veut montrer un ordre de la nature plus qu'un individu observé.\n\nCe parti pris lui a valu des critiques de son vivant, notamment pour des dessins d'embryons jugés trop arrangés pour servir ses théories. Ses idées sociales et raciales, défendues au nom de la biologie, sont aujourd'hui largement rejetées.\n\nSes planches restent pourtant parmi les plus admirées de l'histoire de l'illustration scientifique : on peut les regarder en connaissant aussi ces limites.",
+          "image": "images/btv1b525055842-f93.jpg"
+        },
+        {
+          "ark": "btv1b525055842",
+          "f": 105,
+          "titre": "Kunstformen der Natur",
+          "planche": "Planche 17",
+          "auteur": "Ernst Haeckel",
+          "date": "1899-1904",
+          "cote": "BnF, Estampes et photographie, PET FOL-HD-77 (F)",
+          "legende": "Siphonophorae, siphonophores",
+          "texte": "Beaucoup des organismes représentés mesurent moins d'un millimètre. Sans microscope, ils sont invisibles.\n\nLe dessinateur doit donc choisir un grossissement, isoler un spécimen dans une goutte d'eau, puis reconstituer en volume ce qu'il voit en coupes successives en tournant la vis du microscope.\n\nÀ vous de jouer : choisissez une figure et essayez de la redessiner en une minute, en commençant par son axe de symétrie.",
+          "image": "images/btv1b525055842-f105.jpg"
+        }
+      ]
+    },
+    {
+      "id": "apian",
+      "theme": "Astronomie",
+      "titre": "Calculer le ciel avec du papier",
+      "sousTitre": "Petrus Apianus, Astronomicum Caesareum, 1540",
+      "intro": "Un livre d'astronomie qui se manipule : ses pages portent des disques de papier superposés et mobiles, les volvelles, qui permettent de calculer la position des planètes sans faire de calculs.",
+      "duree": 45,
+      "audio": null,
+      "slides": [
+        {
+          "ark": "btv1b550076223",
+          "f": 9,
+          "titre": "Astronomicum Caesareum",
+          "planche": "Feuillet 2",
+          "auteur": "Petrus Apianus",
+          "date": "1540",
+          "cote": "BnF, Cartes et plans, GE DD-1948 (RES)",
+          "legende": "Volvelle",
+          "texte": "Peter Bienewitz, dit Petrus Apianus (1495-1551), est mathématicien et astronome à l'université d'Ingolstadt, en Bavière. Il est aussi imprimeur : il fabrique lui-même ses livres dans son atelier.\n\nL'Astronomicum Caesareum, « l'astronomie de l'empereur », est dédié à Charles Quint et à son frère Ferdinand. C'est l'un des livres imprimés les plus spectaculaires de la Renaissance.\n\nRegardez les couleurs : elles ont été posées à la main, exemplaire par exemplaire, après l'impression.",
+          "image": "images/btv1b550076223-f9.jpg"
+        },
+        {
+          "ark": "btv1b550076223",
+          "f": 14,
+          "titre": "Astronomicum Caesareum",
+          "planche": "Feuillet 4",
+          "auteur": "Petrus Apianus",
+          "date": "1540",
+          "cote": "BnF, Cartes et plans, GE DD-1948 (RES)",
+          "legende": "Carte des constellations de l'hémisphère nord",
+          "texte": "Une volvelle est un ensemble de disques de papier découpés, empilés et retenus par un fil au centre. On les fait tourner les uns sur les autres, comme les roues d'un cadran.\n\nChaque disque porte une échelle : jours, signes du zodiaque, degrés. En alignant les bons repères, on lit directement le résultat qui, sinon, aurait demandé de longs calculs à partir de tables.\n\nC'est une machine à calculer en papier, quatre siècles avant l'informatique.",
+          "image": "images/btv1b550076223-f14.jpg"
+        },
+        {
+          "ark": "btv1b550076223",
+          "f": 21,
+          "titre": "Astronomicum Caesareum",
+          "planche": "Feuillet 7",
+          "auteur": "Petrus Apianus",
+          "date": "1540",
+          "cote": "BnF, Cartes et plans, GE DD-1948 (RES)",
+          "legende": "Volvelle de Saturne",
+          "texte": "Le livre suit le modèle de l'univers de Ptolémée, l'astronome grec du IIe siècle : la Terre est immobile au centre et les planètes tournent autour d'elle, sur des cercles qui portent eux-mêmes d'autres cercles.\n\nCopernic, qui place le Soleil au centre, ne publie son grand ouvrage qu'en 1543, trois ans plus tard.\n\nLes volvelles d'Apian traduisent ces mouvements compliqués en gestes simples : tourner, aligner, lire.",
+          "image": "images/btv1b550076223-f21.jpg"
+        },
+        {
+          "ark": "btv1b550076223",
+          "f": 26,
+          "titre": "Astronomicum Caesareum",
+          "planche": "Feuillet 9",
+          "auteur": "Petrus Apianus",
+          "date": "1540",
+          "cote": "BnF, Cartes et plans, GE DD-1948 (RES)",
+          "legende": "Volvelle de Jupiter",
+          "texte": "Pourquoi tant d'efforts ? Au XVIe siècle, connaître la position des planètes sert à dresser des calendriers, à prévoir les éclipses, mais aussi à établir des horoscopes, très recherchés à la cour.\n\nUn livre comme celui-ci est donc à la fois un outil savant et un objet de prestige offert aux puissants.\n\nCharles Quint en fut si satisfait qu'il anoblit Apian et lui accorda une forte récompense.",
+          "image": "images/btv1b550076223-f26.jpg"
+        },
+        {
+          "ark": "btv1b550076223",
+          "f": 31,
+          "titre": "Astronomicum Caesareum",
+          "planche": "Feuillet 11",
+          "auteur": "Petrus Apianus",
+          "date": "1540",
+          "cote": "BnF, Cartes et plans, GE DD-1948 (RES)",
+          "legende": "Volvelle de Mars",
+          "texte": "Apian ne fait pas que recopier les Anciens : il observe aussi le ciel. Il suit plusieurs comètes, dont celle de 1531, que l'on appellera bien plus tard la comète de Halley.\n\nIl remarque que la queue d'une comète est toujours tournée à l'opposé du Soleil. Il publie cette observation, illustrée, dans l'Astronomicum Caesareum.\n\nC'est l'une des premières descriptions de ce phénomène, que l'on explique aujourd'hui par la pression du rayonnement et du vent solaires.",
+          "image": "images/btv1b550076223-f31.jpg"
+        },
+        {
+          "ark": "btv1b550076223",
+          "f": 36,
+          "titre": "Astronomicum Caesareum",
+          "planche": "Feuillet 13",
+          "auteur": "Petrus Apianus",
+          "date": "1540",
+          "cote": "BnF, Cartes et plans, GE DD-1948 (RES)",
+          "legende": "Volvelle du Soleil",
+          "texte": "Les volvelles sont fragiles : beaucoup d'exemplaires les ont perdues, déchirées ou mal remontées. Sur Gallica, plusieurs feuillets de l'exemplaire de la BnF apparaissent deux fois de suite : les disques ont sans doute été photographiés dans deux positions.\n\nPour fabriquer une volvelle à la bibliothèque, il suffit de deux disques de carton et d'une attache parisienne : sur le disque du dessous, les douze mois ; sur celui du dessus, une fenêtre qui en montre un seul.\n\nÀ vous de jouer : quelle information aimeriez-vous lire en tournant un disque ?",
+          "image": "images/btv1b550076223-f36.jpg"
+        }
+      ]
+    }
+  ]
+}

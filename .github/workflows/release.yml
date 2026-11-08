@@ -1,0 +1,68 @@
+# Construit l'application de bureau (macOS, Windows, Linux) et publie une release
+# à chaque ajout ou modification d'images, de textes, de pages ou du code de l'application.
+name: Releases Electron
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "images/**"
+      - "audio/**"
+      - "programmes.json"
+      - "*.html"
+      - "lib/**"
+      - "electron/**"
+      - "package.json"
+      - "build/**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+env:
+  VERSION: 1.0.${{ github.run_number }}
+
+jobs:
+  preparer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Créer la release v${{ env.VERSION }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "v$VERSION" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+            --title "Biblio-Folies $VERSION" \
+            --notes "Mise à jour du $(date +%d/%m/%Y) — $(git log -1 --pretty=%s).
+
+          Téléchargez le fichier correspondant à votre ordinateur :
+          - **macOS** : \`.dmg\` (arm64 pour les Mac Apple Silicon, x64 pour les Mac Intel)
+          - **Windows** : \`.exe\`
+          - **Linux** : \`.AppImage\`
+
+          Une fois installée, l'application récupère seule les nouvelles images et les nouveaux textes."
+
+  construire:
+    needs: preparer
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install
+      - run: npm pkg set version=${{ env.VERSION }}
+      - run: node outils/manifeste.js
+      - name: Construire et publier
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CSC_IDENTITY_AUTO_DISCOVERY: "false"
+        run: npx electron-builder --publish always

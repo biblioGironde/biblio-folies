@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Biblio-Folies — projection</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+/* Projection plein cadre : chaque planche couvre tout l'écran (background-size: cover),
+   fondu enchaîné lent, légende serif et QR code posés sur l'image. Un seul thème, sombre. */
+:root {
+  --nuit: #0b0d0c;
+  --papier: #f3efe6;
+  --papier-2: rgba(243, 239, 230, .72);
+  --or: #d8b56c;
+  --serif: "Cormorant Garamond", "Iowan Old Style", Garamond, Georgia, serif;
+  --sans: "Atkinson Hyperlegible", system-ui, sans-serif;
+  --fondu: 2.5s;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { height: 100%; margin: 0; background: var(--nuit); color: var(--papier); overflow: hidden; }
+body { font-family: var(--sans); }
+body.idle { cursor: none; }
+
+/* --- Diapositives --- */
+.scene { position: fixed; inset: 0; }
+.diapo { position: absolute; inset: 0; opacity: 0; transition: opacity var(--fondu) ease-in-out; overflow: hidden; }
+.diapo.on { opacity: 1; }
+.diapo .img, .diapo .flou {
+  position: absolute; inset: 0;
+  background-repeat: no-repeat; background-size: cover; background-position: 50% 0%;
+}
+/* Mode « plein » : l'image remplit l'écran et glisse lentement de haut en bas
+   pour que toute la planche soit parcourue pendant sa durée d'affichage. */
+@media (prefers-reduced-motion: no-preference) {
+  .diapo.on.plein .img { animation: parcours var(--duree, 45s) ease-in-out forwards; }
+  .diapo.on.entier .img { animation: souffle var(--duree, 45s) linear forwards; }
+}
+@media (prefers-reduced-motion: reduce) { .diapo.plein .img { background-position: 50% 35%; } }
+@keyframes parcours { from { background-position: 50% 0%; transform: scale(1.02); } to { background-position: 50% 100%; transform: scale(1.06); } }
+@keyframes souffle { from { transform: scale(1); } to { transform: scale(1.035); } }
+/* Mode « entier » : la planche entière, posée sur une version floutée d'elle-même. */
+.diapo .flou { display: none; filter: blur(40px) brightness(.45) saturate(1.1); transform: scale(1.15); }
+.diapo.entier .flou { display: block; }
+/* La planche entière occupe la zone libre entre la légende (à gauche) et le QR code (à droite). */
+.diapo.entier .img { background-size: contain; background-position: 50% 50%; inset: 5vh 17vw 5vh 42vw; filter: drop-shadow(0 20px 60px rgba(0,0,0,.6)); }
+body.entier .legende-bloc { max-width: 36vw; }
+
+/* Voile pour la lisibilité de la légende */
+.voile { position: fixed; inset: auto 0 0 0; height: 46vh; pointer-events: none;
+  background: linear-gradient(to top, rgba(8,9,9,.88) 0%, rgba(8,9,9,.55) 45%, rgba(8,9,9,0) 100%); }
+
+/* --- Légende --- */
+.legende-bloc {
+  position: fixed; left: 4.5vw; right: calc(4.5vw + clamp(150px, 12vw, 230px) + 3vw); bottom: 6vh;
+  display: grid; gap: .8vh; max-width: 60vw; text-shadow: 0 1px 12px rgba(0,0,0,.55);
+}
+.legende-bloc > * { transition: opacity 1.4s ease, transform 1.4s ease; }
+.legende-bloc.fondu > * { opacity: 0; transform: translateY(8px); }
+.prog { font: 700 clamp(.72rem, .8vw, 1rem) var(--sans); letter-spacing: .18em; text-transform: uppercase; color: var(--or); }
+.titre { font: italic 500 clamp(2.2rem, 4.2vw, 5.4rem)/1 var(--serif); margin: 0; text-wrap: balance; }
+.planche { font: 400 clamp(1.3rem, 1.9vw, 2.5rem)/1.2 var(--serif); margin: 0; }
+.planche span { color: var(--papier-2); }
+.source { font: 400 clamp(.85rem, .95vw, 1.2rem)/1.4 var(--serif); color: var(--papier-2); margin: .6vh 0 0; }
+
+/* --- QR code --- */
+.qr { position: fixed; right: 4.5vw; bottom: 6vh; width: clamp(150px, 12vw, 230px); display: grid; gap: 10px; text-align: center; }
+.qr .code { background: #fff; padding: 10px; aspect-ratio: 1; border-radius: 4px; box-shadow: 0 8px 30px rgba(0,0,0,.4); }
+.qr .code svg { display: block; width: 100%; height: 100%; }
+.qr p { margin: 0; font: 400 clamp(.8rem, .85vw, 1.05rem)/1.3 var(--sans); color: var(--papier); text-shadow: 0 1px 8px rgba(0,0,0,.7); }
+
+/* --- Repères --- */
+.fil { position: fixed; left: 0; bottom: 0; height: 3px; background: var(--or); width: 0; opacity: .8; }
+.compteur { position: fixed; top: 4vh; right: 4.5vw; font: 400 clamp(.85rem, .9vw, 1.1rem) var(--sans); color: var(--papier-2); letter-spacing: .1em; font-variant-numeric: tabular-nums; text-shadow: 0 1px 8px rgba(0,0,0,.7); }
+.pause { position: fixed; top: 4vh; left: 4.5vw; background: var(--or); color: var(--nuit); font: 700 .9rem var(--sans); padding: 8px 14px; border-radius: 2px; }
+.astuce { position: fixed; top: 4vh; left: 50%; transform: translateX(-50%); font: .9rem var(--sans); color: var(--papier); background: rgba(0,0,0,.55); padding: 8px 14px; border-radius: 3px; transition: opacity 1s; }
+body.idle .astuce { opacity: 0; }
+
+/* --- Accueil --- */
+.accueil { position: fixed; inset: 0; background: var(--nuit); display: grid; place-items: center; padding: 24px; overflow: auto; }
+.accueil .boite { width: min(720px, 100%); display: grid; gap: 22px; }
+.accueil h1 { font: italic 500 clamp(2.4rem, 5vw, 4rem)/1 var(--serif); margin: 0; }
+.accueil .intro { font: 1.05rem/1.55 var(--sans); color: var(--papier-2); margin: 0; max-width: 60ch; }
+.choix { display: grid; gap: 10px; }
+.choix button { all: unset; cursor: pointer; display: grid; gap: 4px; padding: 16px 18px; border: 1px solid rgba(243,239,230,.18); background: rgba(243,239,230,.04); }
+.choix button:hover, .choix button:focus-visible { border-color: var(--or); outline: none; }
+.choix b { font: italic 500 1.6rem/1.1 var(--serif); }
+.choix span { font: .9rem var(--sans); color: var(--papier-2); }
+.reglages { display: flex; flex-wrap: wrap; gap: 10px 22px; align-items: center; font: .9rem var(--sans); color: var(--papier-2); }
+.reglages select { font: inherit; background: #181b1a; color: var(--papier); border: 1px solid rgba(243,239,230,.18); padding: 6px 8px; margin-left: 6px; }
+.touches { font: .85rem/1.6 var(--sans); color: var(--papier-2); margin: 0; }
+kbd { font: 700 .8rem var(--sans); border: 1px solid rgba(243,239,230,.3); padding: 1px 6px; border-radius: 2px; color: var(--papier); }
+.erreur { color: var(--or); }
+.retour-accueil { font: .9rem var(--sans); color: var(--papier-2); text-decoration: none; }
+.retour-accueil:hover, .retour-accueil:focus-visible { color: var(--or); }
+</style>
+</head>
+<body>
+<div class="scene" id="scene" hidden>
+  <div class="diapo" id="diapoA"><div class="flou"></div><div class="img"></div></div>
+  <div class="diapo" id="diapoB"><div class="flou"></div><div class="img"></div></div>
+  <div class="voile"></div>
+  <div class="legende-bloc" id="legende"></div>
+  <div class="qr">
+    <div class="code" id="qr" role="img" aria-label="QR code vers le compagnon mobile"></div>
+    <p>Scannez pour lire l'histoire de la planche et écouter la musique</p>
+  </div>
+  <div class="compteur" id="compteur"></div>
+</div>
+<div class="fil" id="fil"></div>
+<div class="pause" id="pause" hidden>En pause — les téléphones devront rescanner le QR code</div>
+<div class="astuce" id="astuce" hidden>Touche <kbd>F</kbd> pour le plein écran</div>
+
+<div class="accueil" id="accueil" hidden>
+  <div class="boite">
+    <a class="retour-accueil" href="index.html">← Toutes les thématiques</a>
+    <h1>Biblio-Folies</h1>
+    <p class="intro">Choisissez un programme. Les planches défilent lentement en plein écran ; le QR code permet au public de suivre sur son téléphone.</p>
+    <div class="choix" id="choix"></div>
+    <div class="reglages">
+      <label for="duree">Durée par planche
+        <select id="duree">
+          <option value="">selon le programme</option>
+          <option value="30">30 s</option><option value="45">45 s</option>
+          <option value="60">1 min</option><option value="90">1 min 30</option>
+        </select>
+      </label>
+      <label for="cadrage">Cadrage
+        <select id="cadrage">
+          <option value="">selon le programme</option>
+          <option value="plein">plein écran (l'image défile)</option>
+          <option value="entier">planche entière</option>
+        </select>
+      </label>
+    </div>
+    <p class="touches"><kbd>F</kbd> plein écran · <kbd>Espace</kbd> pause · <kbd>←</kbd> <kbd>→</kbd> planche précédente ou suivante · <kbd>C</kbd> changer de cadrage · <kbd>M</kbd> retour à ce menu</p>
+    <p class="erreur" id="erreur" hidden></p>
+  </div>
+</div>
+
+<script src="lib/qrcode.js"></script>
+<script src="lib/musee.js"></script>
+<script>
+"use strict";
+let data, list = [], t0 = null, p = null, courant = -1, actif = "A", pauseA = null, timer = null, wake = null, cadrageForce = "";
+const $ = id => document.getElementById(id);
+
+function afficherAccueil() {
+  clearInterval(timer); timer = null;
+  $("scene").hidden = true; $("accueil").hidden = false;
+  $("fil").style.width = 0; $("pause").hidden = true; $("astuce").hidden = true;
+  const c = $("choix"); c.innerHTML = "";
+  const ajouter = (id, titre, sous) => {
+    const b = document.createElement("button"); b.type = "button";
+    b.innerHTML = `<b>${Musee.esc(titre)}</b><span>${Musee.esc(sous)}</span>`;
+    b.onclick = () => { demarrer(id, Math.floor(Date.now() / 1000)); pleinEcran(); };
+    c.append(b);
+  };
+  data.programmes.forEach(pr => ajouter(pr.id, pr.titre, `${pr.sousTitre} · ${pr.slides.length} planches`));
+  if (data.programmes.length > 1) ajouter("tout", "Tous les programmes en boucle", `${data.programmes.reduce((a, x) => a + x.slides.length, 0)} planches`);
+}
+
+function demarrer(prog, depart) {
+  const d = parseInt($("duree").value, 10);
+  if (d) data.programmes.forEach(x => x.duree = d);
+  cadrageForce = $("cadrage").value;
+  p = prog; t0 = depart;
+  list = Musee.playlist(data, p);
+  if (!list.length) { afficherAccueil(); return; }
+  history.replaceState(null, "", `#p=${encodeURIComponent(p)}&t=${t0}`);
+  $("accueil").hidden = true; $("scene").hidden = false;
+  courant = -1; majQR(); tick();
+  clearInterval(timer); timer = setInterval(tick, 250);
+  if (!document.fullscreenElement) $("astuce").hidden = false;
+  veille();
+}
+
+function majQR() {
+  // Le téléphone doit joindre une adresse publique : depuis l'application ou un serveur local,
+  // le QR code pointe vers la page GitHub Pages du projet.
+  const local = !/^https?:$/.test(location.protocol) || /^(localhost|127\.|0\.0\.0\.0|\[::1\])/.test(location.hostname);
+  const base = local && data.urlPublique ? data.urlPublique : location.href;
+  const url = new URL(`compagnon.html#p=${encodeURIComponent(p)}&t=${t0}`, base).href;
+  const q = qrcode(0, "M"); q.addData(url); q.make();
+  $("qr").innerHTML = q.createSvgTag({ cellSize: 4, margin: 0, scalable: true });
+  $("qr").title = url;
+}
+
+function tick() {
+  if (pauseA) return;
+  const pos = Musee.position(list, t0);
+  $("fil").style.width = (pos.progress * 100).toFixed(2) + "%";
+  if (pos.index !== courant) { courant = pos.index; montrer(pos); }
+}
+
+function cadrageDe(s) { return cadrageForce || s.cadrage || s.prog.cadrage || "plein"; }
+
+function montrer(pos) {
+  const s = pos.slide;
+  const suivante = $(actif === "A" ? "diapoB" : "diapoA");
+  const ancienne = $(actif === "A" ? "diapoA" : "diapoB");
+  actif = actif === "A" ? "B" : "A";
+  let url = Musee.image(s, ",1600");
+  const go = () => {
+    suivante.className = "diapo " + cadrageDe(s);
+    document.body.classList.toggle("entier", cadrageDe(s) === "entier");
+    suivante.style.setProperty("--duree", s.duree + "s");
+    suivante.querySelectorAll(".img, .flou").forEach(el => el.style.backgroundImage = `url("${url}")`);
+    // L'animation part de la position actuelle dans la planche (utile après une reprise en cours de diapo).
+    suivante.querySelector(".img").style.animationDelay = `-${(pos.progress * s.duree).toFixed(2)}s`;
+    void suivante.offsetWidth;
+    suivante.classList.add("on");
+    ancienne.classList.remove("on");
+  };
+  // Si le fichier local manque, on se rabat sur l'image servie par Gallica.
+  const img = new Image(); img.onload = go;
+  img.onerror = () => {
+    if (s.image && url === s.image) { url = Musee.image({ ...s, image: null }, ",1600"); img.src = url; }
+    else go();
+  };
+  img.src = url;
+
+  const l = $("legende");
+  l.classList.add("fondu");
+  setTimeout(() => {
+    const ligne2 = [s.planche, s.legende].filter(Boolean);
+    l.innerHTML = `
+      <div class="prog">${Musee.esc(s.prog.titre)}</div>
+      <h1 class="titre">${Musee.esc(s.titre)}</h1>
+      ${ligne2.length ? `<p class="planche">${Musee.esc(ligne2[0])}${ligne2[1] ? ` <span>— ${Musee.esc(ligne2[1])}</span>` : ""}</p>` : ""}
+      <p class="source">${Musee.esc([s.auteur, s.date].filter(Boolean).join(", "))} · Source : gallica.bnf.fr / BnF${s.cote ? " · " + Musee.esc(s.cote) : ""}</p>`;
+    l.classList.remove("fondu");
+  }, 900);
+  $("compteur").textContent = `${String(s.rang).padStart(2, "0")} / ${String(s.total).padStart(2, "0")}`;
+
+  const n = list[(pos.index + 1) % list.length];
+  const pre = new Image(); pre.src = Musee.image(n, ",1600");
+}
+
+function decaler(sec) { if (pauseA) return; t0 = Math.floor(t0 - sec); history.replaceState(null, "", `#p=${encodeURIComponent(p)}&t=${t0}`); majQR(); tick(); }
+function basculerPause() {
+  const imgs = () => document.querySelectorAll(".diapo .img");
+  if (!pauseA) { pauseA = Date.now(); $("pause").hidden = false; imgs().forEach(i => i.style.animationPlayState = "paused"); }
+  else {
+    t0 += Math.round((Date.now() - pauseA) / 1000); pauseA = null; $("pause").hidden = true;
+    imgs().forEach(i => i.style.animationPlayState = "");
+    history.replaceState(null, "", `#p=${encodeURIComponent(p)}&t=${t0}`); majQR(); tick();
+  }
+}
+function pleinEcran() {
+  const el = document.documentElement;
+  if (!document.fullscreenElement && el.requestFullscreen) el.requestFullscreen().then(() => $("astuce").hidden = true).catch(() => {});
+}
+async function veille() { try { if ("wakeLock" in navigator && !wake) { wake = await navigator.wakeLock.request("screen"); wake.addEventListener("release", () => wake = null); } } catch (e) {} }
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && timer) veille(); });
+document.addEventListener("fullscreenchange", () => { if (document.fullscreenElement) $("astuce").hidden = true; });
+
+document.addEventListener("keydown", e => {
+  if ($("scene").hidden) return;
+  const pos = Musee.position(list, t0);
+  if (e.key === "f" || e.key === "F") { document.fullscreenElement ? document.exitFullscreen() : pleinEcran(); }
+  else if (e.key === " ") { e.preventDefault(); basculerPause(); }
+  else if (e.key === "ArrowRight") decaler(pos.restant);
+  else if (e.key === "ArrowLeft") { const prev = list[(pos.index - 1 + list.length) % list.length]; decaler(-(pos.slide.duree - pos.restant) - prev.duree); }
+  else if (e.key === "c" || e.key === "C") {
+    cadrageForce = cadrageDe(pos.slide) === "plein" ? "entier" : "plein";
+    const d = $(actif === "A" ? "diapoA" : "diapoB");
+    d.classList.remove("plein", "entier"); d.classList.add(cadrageForce);
+    document.body.classList.toggle("entier", cadrageForce === "entier");
+  }
+  else if (e.key === "m" || e.key === "M") { history.replaceState(null, "", location.pathname); afficherAccueil(); }
+});
+document.addEventListener("dblclick", () => { if (!$("scene").hidden) pleinEcran(); });
+
+let idle;
+document.addEventListener("mousemove", () => { document.body.classList.remove("idle"); clearTimeout(idle); idle = setTimeout(() => document.body.classList.add("idle"), 2500); });
+
+Musee.charger().then(d => {
+  data = d;
+  const h = Musee.lireHash();
+  // #p=<id> seul (lien depuis l'accueil) : la projection démarre maintenant.
+  if (h.p && (h.p === "tout" || data.programmes.some(x => x.id === h.p))) demarrer(h.p, h.t || Math.floor(Date.now() / 1000));
+  else afficherAccueil();
+}).catch(() => {
+  $("accueil").hidden = false; $("erreur").hidden = false;
+  $("erreur").textContent = "Impossible de charger programmes.json. Ouvrez la page depuis GitHub Pages ou un petit serveur local (python3 -m http.server).";
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+{
+  "name": "biblio-folies",
+  "productName": "Biblio-Folies",
+  "version": "1.0.0",
+  "description": "Musée numérique des bibliothèques de Gironde : planches de Gallica projetées en grand, suivies sur smartphone.",
+  "author": "biblio.gironde <infos@julien-drochon.net>",
+  "license": "MIT",
+  "homepage": "https://bibliogironde.github.io/biblio-folies/",
+  "repository": "github:biblioGironde/biblio-folies",
+  "main": "electron/main.js",
+  "scripts": {
+    "manifeste": "node outils/manifeste.js",
+    "start": "node outils/manifeste.js && electron .",
+    "dist": "node outils/manifeste.js && electron-builder"
+  },
+  "dependencies": {
+    "electron-updater": "6.3.9"
+  },
+  "devDependencies": {
+    "electron": "33.2.1",
+    "electron-builder": "25.1.8"
+  },
+  "build": {
+    "appId": "fr.gironde.biblio-folies",
+    "productName": "Biblio-Folies",
+    "directories": { "output": "dist", "buildResources": "build" },
+    "files": [
+      "electron/**",
+      "*.html",
+      "programmes.json",
+      "contenu.json",
+      "lib/**",
+      "images/**",
+      "audio/**",
+      "package.json"
+    ],
+    "publish": [
+      { "provider": "github", "owner": "biblioGironde", "repo": "biblio-folies", "releaseType": "release" }
+    ],
+    "mac": {
+      "target": [{ "target": "dmg", "arch": ["arm64", "x64"] }, { "target": "zip", "arch": ["arm64", "x64"] }],
+      "category": "public.app-category.education",
+      "identity": null
+    },
+    "win": { "target": [{ "target": "nsis", "arch": ["x64"] }] },
+    "nsis": { "oneClick": false, "allowToChangeInstallationDirectory": true, "perMachine": false },
+    "linux": { "target": ["AppImage"], "category": "Education" }
+  }
+}
