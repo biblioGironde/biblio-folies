@@ -39,8 +39,10 @@ body.idle { cursor: none; }
 /* L'effet ne dépend pas du réglage « Réduire les animations » du poste : ce réglage concerne
    la personne devant l'ordinateur, pas le public de la projection. On le coupe depuis le menu
    (« Mouvement des images ») ou avec la touche K. */
-.diapo.on.plein .img { animation: kenburns var(--duree, 45s) ease-in-out forwards; }
-.diapo.on.entier .img { animation: kenburns-entier var(--duree, 45s) ease-in-out forwards; }
+/* L'animation reste active sur la planche qui s'efface : elle poursuit son mouvement pendant le
+   fondu au lieu de revenir d'un coup à sa position de départ. */
+.diapo.plein .img { animation: kenburns var(--duree, 45s) ease-in-out forwards; }
+.diapo.entier .img { animation: kenburns-entier var(--duree, 45s) ease-in-out forwards; }
 body.fixe .diapo .img { animation: none !important; }
 body.fixe .diapo.plein .img { background-position: 50% 35%; }
 /* Effet Ken Burns : zoom lent combiné à un glissement. Chaque planche reçoit l'un des mouvements
@@ -349,16 +351,20 @@ function montrer(pos) {
   actif = actif === "A" ? "B" : "A";
   let url = Musee.image(s, ",1600");
   const go = () => {
+    const imgEl = suivante.querySelector(".img");
+    imgEl.style.animation = "none"; // repart de zéro, même si le cadrage n'a pas changé
     suivante.className = "diapo " + cadrageDe(s);
     document.body.classList.toggle("entier", cadrageDe(s) === "entier");
-    suivante.style.setProperty("--duree", s.duree + "s");
+    // Le mouvement dure le temps de la planche plus celui du fondu de sortie (2,5 s).
+    suivante.style.setProperty("--duree", (s.duree + 2.5) + "s");
     // Mouvement Ken Burns : choisi selon le rang de la planche, pour alterner les directions.
     const kb = KEN_BURNS[pos.index % KEN_BURNS.length];
     Object.entries(kb).forEach(([k, v]) => suivante.style.setProperty("--kb-" + k, v));
     suivante.querySelectorAll(".img, .flou").forEach(el => el.style.backgroundImage = `url("${url}")`);
     // L'animation part de la position actuelle dans la planche (utile après une reprise en cours de diapo).
-    suivante.querySelector(".img").style.animationDelay = `-${(pos.progress * s.duree).toFixed(2)}s`;
     void suivante.offsetWidth;
+    imgEl.style.animation = "";
+    imgEl.style.animationDelay = `-${(pos.progress * s.duree).toFixed(2)}s`; // après « animation », qui le remettrait à zéro
     suivante.classList.add("on");
     ancienne.classList.remove("on");
   };
