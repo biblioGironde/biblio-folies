@@ -222,12 +222,12 @@ body.idle .reglages-btn { opacity: 0; pointer-events: none; }
 <script src="lib/musee.js"></script>
 <script>
 "use strict";
-let data, list = [], t0 = null, p = null, m = "mobile", courant = -1, actif = "A", pauseA = null, timer = null, wake = null, cadrageForce = "";
+let original, data, list = [], t0 = null, p = null, m = "mobile", dureeImposee = null, courant = -1, actif = "A", pauseA = null, timer = null, wake = null, cadrageForce = "";
 const son = document.getElementById("son");
 const $ = id => document.getElementById(id);
 
 function afficherAccueil() {
-  clearInterval(timer); timer = null;
+  clearInterval(timer); timer = null; dureeImposee = null;
   arreterSon();
   $("scene").hidden = true; $("choixMusique").hidden = true; $("accueil").hidden = false;
   $("fil").style.width = 0; $("pause").hidden = true; $("astuce").hidden = true;
@@ -259,11 +259,14 @@ function lancer(prog) {
   $("choixMusique").querySelector("button[data-m]").focus();
 }
 
-function majHash() { history.replaceState(null, "", `#p=${encodeURIComponent(p)}&t=${t0}&m=${m}`); }
+// Tout ce dont un téléphone a besoin pour suivre : thématique, heure de départ, musique, durée imposée.
+function parametres() { return `p=${encodeURIComponent(p)}&t=${t0}&m=${m}${dureeImposee ? `&d=${dureeImposee}` : ""}`; }
+function majHash() { history.replaceState(null, "", "#" + parametres()); }
 
 function demarrer(prog, depart, mode) {
-  const d = parseInt($("duree").value, 10);
-  if (d) data.programmes.forEach(x => x.duree = d);
+  const d = dureeImposee || parseInt($("duree").value, 10) || null;
+  data = structuredClone(original); // repartir des durées d'origine à chaque lancement
+  dureeImposee = d; Musee.imposerDuree(data, d);
   cadrageForce = $("cadrage").value;
   p = prog; t0 = depart; m = mode === "salle" ? "salle" : "mobile";
   list = Musee.playlist(data, p);
@@ -285,7 +288,7 @@ function majQR() {
   // le QR code pointe vers la page GitHub Pages du projet.
   const local = !/^https?:$/.test(location.protocol) || /^(localhost|127\.|0\.0\.0\.0|\[::1\])/.test(location.hostname);
   const base = local && data.urlPublique ? data.urlPublique : location.href;
-  const url = new URL(`compagnon.html#p=${encodeURIComponent(p)}&t=${t0}&m=${m}`, base).href;
+  const url = new URL(`compagnon.html#${parametres()}`, base).href;
   const q = qrcode(0, "M"); q.addData(url); q.make();
   $("qr").innerHTML = q.createSvgTag({ cellSize: 4, margin: 0, scalable: true });
   $("qr").title = url;
@@ -438,9 +441,10 @@ document.addEventListener("mousemove", () => {
 });
 
 Musee.charger().then(d => {
-  data = d;
+  original = d; data = structuredClone(d);
   const h = Musee.lireHash();
   const valide = h.p && (h.p === "tout" || data.programmes.some(x => x.id === h.p));
+  dureeImposee = h.d;
   if (valide && h.t) {
     // Reprise d'une projection en cours (rechargement) : la musique de salle attend un clic.
     demarrer(h.p, h.t, h.m || "mobile");

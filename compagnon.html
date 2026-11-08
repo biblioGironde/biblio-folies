@@ -216,6 +216,7 @@ Musee.charger().then(d => {
   const h = Musee.lireHash();
   if (!h.p || !h.t) return;
   modeMusique = h.m || "mobile";
+  Musee.imposerDuree(data, h.d);
   list = Musee.playlist(data, h.p);
   if (!list.length) return;
   t0 = h.t;
