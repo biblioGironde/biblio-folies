@@ -75,15 +75,20 @@ python3 -m http.server 8000   # ou tester le site dans un navigateur
 |---|---|---|
 | Haeckel, *Kunstformen der Natur* | Richard Wagner, *Die Walküre* : « Du bist der Lenz ». Lilli Lehmann (soprano), orchestre dirigé par Friedrich Kark. Disque Odeon, Berlin, 1907 | [Gallica bpt6k1287336](https://gallica.bnf.fr/ark:/12148/bpt6k1287336), domaine public |
 
-### Nettoyage du son (facultatif)
+### Nettoyage du son
 
-Les enregistrements sont diffusés tels que Gallica les fournit. Pour essayer un nettoyage, gardez l'original de côté dans `musique/originaux/` (ce dossier n'est publié ni sur le site ni dans l'application), puis :
+Les enregistrements bruts de Gallica sont gardés dans `musique/originaux/`. Ce dossier n'est publié ni sur le site ni dans l'application. La version diffusée, dans `musique/`, est obtenue avec :
 
 ```bash
-outils/nettoyer_son.sh musique/originaux/disque.mp3 musique/disque.mp3 doux   # ou fort
+python3 outils/nettoyer_son.py musique/originaux/disque.mp3 musique/disque.mp3 --bruit 0.8 1.6
 ```
 
-Écoutez le résultat avant de le publier : le traitement peut dénaturer la voix.
+`--bruit` indique un passage de sillon vide, en secondes, qui sert d'empreinte du souffle. Le script :
+
+- soustrait ce souffle, avec une réduction limitée à −9 dB et lissée ;
+- coupe au-dessus de 5,5 kHz, où un disque acoustique ne contient plus que du bruit.
+
+Ni le volume ni la vitesse ne sont modifiés. Pour l'enregistrement de Lilli Lehmann, le souffle baisse de 13 dB, et la voix comme l'orchestre restent inchangés. Écoutez toujours le résultat au casque avant de publier.
 
 ## Droits
 
