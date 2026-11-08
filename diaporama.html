@@ -37,12 +37,22 @@ body.idle { cursor: none; }
 /* Mode « plein » : l'image remplit l'écran et glisse lentement de haut en bas
    pour que toute la planche soit parcourue pendant sa durée d'affichage. */
 @media (prefers-reduced-motion: no-preference) {
-  .diapo.on.plein .img { animation: parcours var(--duree, 45s) ease-in-out forwards; }
-  .diapo.on.entier .img { animation: souffle var(--duree, 45s) linear forwards; }
+  .diapo.on.plein .img { animation: kenburns var(--duree, 45s) ease-in-out forwards; }
+  .diapo.on.entier .img { animation: kenburns-entier var(--duree, 45s) ease-in-out forwards; }
 }
 @media (prefers-reduced-motion: reduce) { .diapo.plein .img { background-position: 50% 35%; } }
-@keyframes parcours { from { background-position: 50% 0%; transform: scale(1.02); } to { background-position: 50% 100%; transform: scale(1.06); } }
-@keyframes souffle { from { transform: scale(1); } to { transform: scale(1.035); } }
+/* Effet Ken Burns : zoom lent combiné à un glissement. Chaque planche reçoit l'un des mouvements
+   définis dans KEN_BURNS (script), appliqué par des variables CSS. En plein écran, le glissement
+   vertical parcourt aussi toute la hauteur de la planche. */
+@keyframes kenburns {
+  from { background-position: 50% var(--kb-y0, 0%); transform: scale(var(--kb-s0, 1.04)) translate(var(--kb-x0, 0%), 0); }
+  to   { background-position: 50% var(--kb-y1, 100%); transform: scale(var(--kb-s1, 1.16)) translate(var(--kb-x1, 0%), 0); }
+}
+@keyframes kenburns-entier {
+  from { transform: scale(var(--kb-e0, 1)) translate(var(--kb-x0, 0%), 0); }
+  to   { transform: scale(var(--kb-e1, 1.08)) translate(var(--kb-x1, 0%), 0); }
+}
+.diapo .img { transform-origin: var(--kb-ox, 50%) var(--kb-oy, 50%); will-change: transform, background-position; }
 /* Mode « entier » : la planche entière, posée sur une version floutée d'elle-même. */
 .diapo .flou { display: none; filter: blur(40px) brightness(.45) saturate(1.1); transform: scale(1.15); }
 .diapo.entier .flou { display: block; }
@@ -288,6 +298,15 @@ function tick() {
   if (pos.index !== courant) { courant = pos.index; montrer(pos); }
 }
 
+/* Mouvements Ken Burns : s = échelle de départ/arrivée (plein écran), e = échelle (planche entière),
+   y = position verticale de l'image, x = glissement horizontal, o = point d'ancrage du zoom. */
+const KEN_BURNS = [
+  { s0: "1.04", s1: "1.18", e0: "1",    e1: "1.08", y0: "0%",   y1: "100%", x0: "0%",    x1: "-2.5%", ox: "35%", oy: "40%" }, // avance vers le bas, glisse à gauche
+  { s0: "1.20", s1: "1.05", e0: "1.08", e1: "1",    y0: "100%", y1: "0%",   x0: "-2%",   x1: "2%",    ox: "65%", oy: "55%" }, // recule vers le haut, glisse à droite
+  { s0: "1.06", s1: "1.22", e0: "1",    e1: "1.09", y0: "15%",  y1: "85%",  x0: "2.5%",  x1: "0%",    ox: "60%", oy: "35%" }, // zoom vers le haut à droite
+  { s0: "1.18", s1: "1.04", e0: "1.07", e1: "1",    y0: "85%",  y1: "10%",  x0: "0%",    x1: "-1.5%",   ox: "40%", oy: "60%" }  // recule depuis le bas à gauche
+];
+
 function cadrageDe(s) { return cadrageForce || s.cadrage || s.prog.cadrage || "plein"; }
 
 function montrer(pos) {
@@ -300,6 +319,9 @@ function montrer(pos) {
     suivante.className = "diapo " + cadrageDe(s);
     document.body.classList.toggle("entier", cadrageDe(s) === "entier");
     suivante.style.setProperty("--duree", s.duree + "s");
+    // Mouvement Ken Burns : choisi selon le rang de la planche, pour alterner les directions.
+    const kb = KEN_BURNS[pos.index % KEN_BURNS.length];
+    Object.entries(kb).forEach(([k, v]) => suivante.style.setProperty("--kb-" + k, v));
     suivante.querySelectorAll(".img, .flou").forEach(el => el.style.backgroundImage = `url("${url}")`);
     // L'animation part de la position actuelle dans la planche (utile après une reprise en cours de diapo).
     suivante.querySelector(".img").style.animationDelay = `-${(pos.progress * s.duree).toFixed(2)}s`;
