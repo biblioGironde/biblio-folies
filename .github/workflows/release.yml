@@ -60,25 +60,25 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Installer les dépendances (3 essais en cas de coupure réseau)
+      - name: Installer les dépendances (5 essais espacés en cas de coupure réseau)
         shell: bash
         run: |
-          for essai in 1 2 3; do
+          for essai in 1 2 3 4 5; do
             npm install && test -d node_modules/electron/dist && exit 0
-            echo "Essai $essai échoué, nouvel essai dans 30 s"; rm -rf node_modules/electron; sleep 30
+            echo "Essai $essai échoué, nouvel essai dans $((essai * 60)) s"; rm -rf node_modules/electron; sleep $((essai * 60))
           done
           exit 1
       - run: npm pkg set version=${{ env.VERSION }}
       - run: node outils/manifeste.js
-      - name: Construire et déposer dans le brouillon (3 essais en cas de coupure réseau)
+      - name: Construire et déposer dans le brouillon (5 essais espacés en cas de coupure réseau)
         shell: bash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CSC_IDENTITY_AUTO_DISCOVERY: "false"
         run: |
-          for essai in 1 2 3; do
+          for essai in 1 2 3 4 5; do
             npx electron-builder --publish always && exit 0
-            echo "Essai $essai échoué, nouvel essai dans 60 s"; sleep 60
+            echo "Essai $essai échoué, nouvel essai dans $((essai * 60)) s"; sleep $((essai * 60))
           done
           exit 1
 
