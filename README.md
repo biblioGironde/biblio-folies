@@ -93,6 +93,9 @@ python3 outils/nettoyer_son.py musique/originaux/disque.mp3 musique/disque.mp3 -
 
 Ni le volume ni la vitesse ne sont modifiés. Pour l'enregistrement de Lilli Lehmann, le souffle baisse de 13 dB, et la voix comme l'orchestre restent inchangés. Écoutez toujours le résultat au casque avant de publier.
 
-## Droits
+## Licences
 
-Code sous licence MIT. Images : « Source gallica.bnf.fr / Bibliothèque nationale de France » (non couvertes par la licence MIT). La réutilisation non commerciale est libre avec mention de la source. Les textes de médiation sont rédigés pour biblio.gironde.
+- **Code** : © Département de la Gironde — biblio.gironde, sous licence [GNU Affero General Public License v3.0](LICENSE) ou ultérieure (AGPL-3.0-or-later). Vous pouvez le réutiliser et le modifier ; toute version modifiée, redistribuée ou mise en ligne, doit être publiée sous la même licence, avec son code source.
+- **Textes de médiation** : [Licence Ouverte Etalab 2.0](https://www.etalab.gouv.fr/licence-ouverte-open-licence/), réutilisation libre, y compris commerciale, avec mention de la source « biblio.gironde ».
+- **Images** : « Source gallica.bnf.fr / Bibliothèque nationale de France ». Elles ne sont pas couvertes par ces licences : leur réutilisation non commerciale est libre avec mention de la source ; une réutilisation commerciale suppose l'accord de la BnF.
+- **Enregistrements sonores** (`musique/`) : non couverts par ces licences ; leur source est indiquée ci-dessus.
