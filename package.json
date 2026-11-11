@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "Musée numérique des bibliothèques de Gironde : planches de Gallica projetées en grand, suivies sur smartphone.",
   "author": "biblio.gironde <infos@julien-drochon.net>",
-  "license": "MIT",
+  "license": "AGPL-3.0-or-later",
   "homepage": "https://bibliogironde.github.io/biblio-folies/",
   "repository": "github:biblioGironde/biblio-folies",
   "main": "electron/main.js",
